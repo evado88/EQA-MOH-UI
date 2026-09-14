@@ -1,0 +1,286 @@
+import Assist from "../classes/assist";
+
+export interface MenuItem {
+  key: string;
+  text: string;
+  icon: string;
+  path: string;
+  roles: number[];
+  items: MenuItem[];
+}
+
+// who sees what: provider staff run the scheme, labs only see their own work
+const ADMIN = Assist.ADMIN_ROLES;
+const LAB = Assist.LABORATORY_ROLES;
+const EVERYONE = [...ADMIN, ...LAB];
+
+export const navigation: MenuItem[] = [
+  {
+    key: "home",
+    text: "Dashboard",
+    icon: "fa fa-cubes",
+    path: "/",
+    roles: EVERYONE,
+    items: [],
+  },
+  {
+    key: "7-administration",
+    text: "Administration",
+    icon: "fa fa-gears",
+    path: "#",
+    roles: ADMIN,
+    items: [
+      {
+        key: "user",
+        text: "User",
+        icon: "",
+        path: "/admin/user/list",
+        roles: ADMIN,
+        items: [],
+      },
+      {
+        key: "audit",
+        text: "Audit",
+        icon: "",
+        path: "/admin/audit/list",
+        roles: ADMIN,
+        items: [],
+      },
+      {
+        key: "role",
+        text: "Role",
+        icon: "",
+        path: "/admin/role/list",
+        roles: ADMIN,
+        items: [],
+      }, 
+    ],
+  },
+  {
+    key: "1-dictionaries",
+    text: "Dictionaries",
+    icon: "fa fa-cube",
+    path: "#",
+    roles: ADMIN,
+    items: [
+      {
+        key: "stage",
+        text: "Stage",
+        icon: "",
+        path: "/admin/stages/list",
+        roles: ADMIN,
+        items: [],
+      },
+      {
+        key: "status",
+        text: "Status",
+        icon: "",
+        path: "/admin/statuses/list",
+        roles: ADMIN,
+        items: [],
+      },
+      {
+        key: "labtype",
+        text: "Lab Type",
+        icon: "",
+        path: "/admin/lab-types/list",
+        roles: ADMIN,
+        items: [],
+      },
+      {
+        key: "ptcyclestatus",
+        text: "PT Cycle Status",
+        icon: "",
+        path: "/admin/pt-cycle-statuses/list",
+        roles: ADMIN,
+        items: [],
+      }, 
+    ],
+  },
+  {
+    key: "3-demographics",
+    text: "Demographics",
+    icon: "fa fa-simplybuilt",
+    path: "#",
+    roles: ADMIN,
+    items: [
+      {
+        key: "province",
+        text: "Province",
+        icon: "",
+        path: "/admin/provinces/list",
+        roles: ADMIN,
+        items: [],
+      },
+      {
+        key: "district",
+        text: "District",
+        icon: "",
+        path: "/admin/districts/list",
+        roles: ADMIN,
+        items: [],
+      }, 
+    ],
+  },
+  {
+    key: "5-calibration",
+    text: "Schemes",
+    icon: "fa fa fa-thermometer",
+    path: "#",
+    roles: ADMIN,
+    items: [
+      {
+        key: "provider",
+        text: "Provider",
+        icon: "",
+        path: "/admin/providers/list",
+        roles: ADMIN,
+        items: [],
+      },
+      {
+        key: "scheme",
+        text: "Scheme",
+        icon: "",
+        path: "/admin/schemes/list",
+        roles: ADMIN,
+        items: [],
+      },
+      {
+        key: "service",
+        text: "Service",
+        icon: "",
+        path: "/admin/services/list",
+        roles: ADMIN,
+        items: [],
+      },
+      {
+        key: "method",
+        text: "Method",
+        icon: "",
+        path: "/admin/methods/list",
+        roles: ADMIN,
+        items: [],
+      },
+      {
+        key: "methodsample",
+        text: "Method Sample",
+        icon: "",
+        path: "/admin/method-samples/list",
+        roles: ADMIN,
+        items: [],
+      }, 
+    ],
+  },
+  {
+    key: "10-facilities",
+    text: "Laboratories",
+    icon: "fa fa-map-marker",
+    path: "#",
+    roles: ADMIN,
+    items: [
+      {
+        key: "laboratory",
+        text: "Laboratory",
+        icon: "",
+        path: "/admin/laboratorys/list",
+        roles: ADMIN,
+        items: [],
+      }, 
+    ],
+  },
+  {
+    key: "4-facilities",
+    text: "PT Calendar",
+    icon: "fa fa-map-marker",
+    path: "#",
+    roles: ADMIN,
+    items: [
+      {
+        key: "ptcycle",
+        text: "PT Cycle",
+        icon: "",
+        path: "/admin/pt-cycles/list",
+        roles: ADMIN,
+        items: [],
+      },
+      {
+        key: "enrollment",
+        text: "Enrollment",
+        icon: "",
+        path: "/admin/enrollments/list",
+        roles: ADMIN,
+        items: [],
+      }, 
+    ],
+  },
+  {
+    key: "8-applications",
+    text: "Applications",
+    icon: "fa fa-stethoscope",
+    path: "#",
+    roles: ADMIN,
+    items: [
+      {
+        key: "applications",
+        text: "Application",
+        icon: "",
+        path: "/admin/applications/list",
+        roles: ADMIN,
+        items: [],
+      }, 
+    ],
+  },
+  {
+    key: "11-results",
+    text: "Results",
+    icon: "fa fa-stethoscope",
+    path: "#",
+    roles: ADMIN,
+    items: [
+      {
+        key: "tbxpertultraresult",
+        text: "TB Xpert Ultra Result",
+        icon: "",
+        path: "/admin/tb-xpert-ultra-results/list",
+        roles: ADMIN,
+        items: [],
+      }, 
+    ],
+  },
+  {
+    key: "20-lab-calendar",
+    text: "PT Calendar",
+    icon: "fa fa-map-marker",
+    path: "#",
+    roles: LAB,
+    items: [
+      // the enrolment page already lists the cycles open to this lab, so it
+      // does not need the provider's full calendar
+      {
+        key: "lab-enrollment",
+        text: "My Enrolments",
+        icon: "",
+        path: "/facility/enrollments/list",
+        roles: LAB,
+        items: [],
+      },
+    ],
+  },
+  {
+    key: "21-lab-results",
+    text: "PT Results",
+    icon: "fa fa-stethoscope",
+    path: "#",
+    roles: LAB,
+    items: [
+      {
+        key: "lab-tbxpertultraresult",
+        text: "My Results",
+        icon: "",
+        path: "/facility/tb-xpert-ultra-results/list",
+        roles: LAB,
+        items: [],
+      },
+    ],
+  },
+];

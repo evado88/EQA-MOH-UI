@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -s \"http://localhost:5175/src/assets/css/login.css\")",
+      "Bash(\"/c/Program Files \\(x86\\)/Microsoft/Edge/Application/msedge.exe\" --headless=new --disable-gpu --no-sandbox --dump-dom \"http://localhost:5175/signup\"  > /tmp/dom2.html 2>&1 *)"
+    ],
+    "additionalDirectories": [
+      "\\tmp"
+    ]
+  }
+}

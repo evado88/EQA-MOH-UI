@@ -1,0 +1,79 @@
+:root {
+  --sidebar-width: 260px;
+  --bg: #0b1220;
+  --panel: #071021;
+  --text: #e6eef6;
+}
+
+.sidebar {
+  width: var(--sidebar-width);
+  background: linear-gradient(180deg, var(--bg), var(--panel));
+  color: var(--text);
+  padding: 16px;
+  box-sizing: border-box;
+  height: 100vh;
+}
+
+h2 {
+  margin: 0 0 12px 0;
+  font-size: 18px;
+}
+
+.nav-group {
+  margin-bottom: 12px;
+}
+
+.nav-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  cursor: pointer;
+  border: none;
+  color: inherit;
+  font-size: 15px;
+}
+
+.nav-toggle:focus {
+  outline: 2px solid rgba(96, 165, 250, 0.25);
+}
+
+.chev {
+  width: 18px;
+  height: 18px;
+  transform-origin: center;
+  transition: transform 0.25s ease;
+}
+
+.expanded .chev {
+  transform: rotate(90deg);
+}
+
+.nav-content {
+  overflow: hidden;
+  transition: height 0.25s ease;
+  height: 0;
+}
+
+.nav-list {
+  padding: 8px 6px 12px 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.nav-link {
+  padding: 8px 10px;
+  border-radius: 6px;
+  text-decoration: none;
+  color: var(--text);
+  font-size: 14px;
+}
+
+.nav-link:hover {
+  background: rgba(255, 255, 255, 0.1);
+}

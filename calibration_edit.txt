@@ -1,0 +1,366 @@
+import React, { useState, useEffect, useMemo, useRef } from "react";
+import { Titlebar } from "../../../components/titlebar";
+import { Card } from "../../../components/card";
+import { Row } from "../../../components/row";
+import { Col } from "../../../components/column";
+import SelectBox from "devextreme-react/select-box";
+import { TextBox } from "devextreme-react/text-box";
+import {
+  Validator,
+  RequiredRule,
+  AsyncRule,
+  CompareRule,
+  CustomRule,
+} from "devextreme-react/validator";
+import TextArea from "devextreme-react/text-area";
+import { NumberBox } from "devextreme-react/number-box";
+import Button from "devextreme-react/button";
+import ValidationSummary from "devextreme-react/validation-summary";
+import { LoadPanel } from "devextreme-react/load-panel";
+import DateBox from "devextreme-react/date-box";
+import { useTheme } from "../../../context/ThemeContext";
+import { useAuth } from "../../../context/AuthContext";
+import PageConfig from "../../../classes/page-config";
+import Assist from "../../../classes/assist";
+import { LoadIndicator } from "devextreme-react/load-indicator";
+import { useNavigate, useParams } from "react-router-dom";
+import HtmlEditor, {
+  Toolbar,
+  Item,
+  MediaResizing,
+} from "devextreme-react/html-editor";
+import AppInfo from "../../../classes/app-info";
+
+const ExpenseEarningGroupEdit = () => {
+  //user
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const { eId } = useParams(); // Destructure the parameter directly
+
+  //posting
+  const [type, setType] = useState<undefined | string>(undefined);
+  const [description, setDescription] = useState<undefined | string>(undefined);
+
+  //service
+  const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState(false);
+  const hasRun = useRef(false);
+
+  const [stage, setStage] = useState(1);
+
+  const pageConfig = new PageConfig(`Calibration`, "", "", "Calibration", "", [
+    Assist.ROLE_ADMIN,
+  ]);
+
+  pageConfig.Id = eId == undefined ? 0 : Number(eId);
+
+  useEffect(() => {
+    //check if initialized
+    if (hasRun.current) return;
+    hasRun.current = true;
+
+    //check permissions and audit
+    if (!Assist.checkPageAuditPermission(pageConfig, user)) {
+      Assist.redirectUnauthorized(navigate);
+      return;
+    }
+
+    //only load if updating item
+    if (pageConfig.Id != 0) {
+      setLoading(true);
+
+      setTimeout(() => {
+        Assist.loadData(pageConfig.Title, `calibration/id/${pageConfig.Id}`)
+          .then((data) => {
+            setLoading(false);
+            updateVaues(data);
+            setError(false);
+          })
+          .catch((message) => {
+            setLoading(false);
+            setError(true);
+            Assist.showMessage(message, "error");
+          });
+      }, Assist.DEV_DELAY);
+    }
+  }, []);
+
+  const updateVaues = (data: any) => {
+    setType(data.name);
+    setDescription(data.description);
+  };
+
+  const onFormSubmitNext = (e: React.FormEvent) => {
+    e.preventDefault();
+    setStage((prev) => prev + 1);
+
+    return;
+    setSaving(true);
+  };
+
+  const onFormSubmitBack = (e: React.FormEvent) => {
+    e.preventDefault();
+    setStage((prev) => prev - 1);
+
+    return;
+    setSaving(true);
+  };
+  const onFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setStage((prev) => prev + 1);
+
+    return;
+    setSaving(true);
+
+    const postData = {
+      user_id: user.userid,
+      name: name,
+      description: description,
+      // approval
+      status_id: 1,
+      stage_id: 1,
+      approval_levels: 1,
+    };
+
+    const url =
+      pageConfig.Id == 0
+        ? `calibration/create`
+        : `calibration/update/${pageConfig.Id}`;
+
+    setTimeout(() => {
+      Assist.postPutData(pageConfig.Title, url, postData, pageConfig.Id)
+        .then((data: any) => {
+          setSaving(false);
+          updateVaues(data);
+
+          Assist.showMessage(
+            `You have successfully updated the ${pageConfig.Title}!`,
+            "success",
+          );
+
+          if (pageConfig.Id == 0) {
+            //navigate
+            navigate(`/admin/calibration/edit/${data.id}`);
+          }
+        })
+        .catch((message) => {
+          setSaving(false);
+          Assist.showMessage(message, "error");
+        });
+    }, Assist.DEV_DELAY);
+  };
+
+  const toolbar: any = useMemo(() => {
+    return AppInfo.htmlToolbar;
+  }, []);
+
+  const setPreviousStage = () => {
+    setStage((prev) => prev - 1);
+  };
+
+  return (
+    <div id="pageRoot" className="page-content">
+      <LoadPanel
+        shadingColor="rgba(0,0,0,0.4)"
+        position={{ of: "#pageRoot" }}
+        visible={loading}
+        showIndicator={true}
+        shading={true}
+        showPane={true}
+        hideOnOutsideClick={false}
+      />
+      <Titlebar
+        title={`Start ${pageConfig.Title}`}
+        section={"Configuration"}
+        icon={"gear"}
+        url="#"
+      ></Titlebar>
+      {/* end widget */}
+
+      {/* chart start */}
+      <Row>
+        <Col sz={12} sm={12} lg={7}>
+          <Card title={`Step ${stage} of 7`} showHeader={true}>
+            {stage == 1 && (
+              <form id="formMain" onSubmit={onFormSubmit}>
+                <div className="form">
+                  <div className="dx-fieldset">
+                    <div className="dx-fieldset-header">
+                      Choose Calibration Type
+                    </div>
+                    <div className="dx-field">
+                      <div className="dx-field-label">Type</div>
+                      <SelectBox
+                        className="dx-field-value"
+                        placeholder="Type"
+                        dataSource={["Weighing Balance"]}
+                        value={type}
+                        disabled={error || saving}
+                        onValueChange={(text) => setType(text)}
+                      >
+                        <Validator>
+                          <RequiredRule message="Calibration type is required" />
+                        </Validator>
+                      </SelectBox>
+                    </div>
+                  </div>
+                  <div className="dx-field">
+                    <div className="dx-field-label">
+                      <ValidationSummary id="summaryMain" />
+                    </div>
+                  </div>
+                  <div className="dx-field">
+                    <div className="dx-field-label"></div>
+                    <Button
+                      width="100%"
+                      type={saving ? "normal" : "default"}
+                      disabled={loading || error || saving}
+                      useSubmitBehavior={true}
+                    >
+                      <LoadIndicator
+                        className="button-indicator"
+                        visible={saving}
+                      />
+                      <span className="dx-button-text">Next</span>
+                    </Button>
+                  </div>
+                </div>
+              </form>
+            )}
+            {stage == 2 && (
+              <form id="formMain" onSubmit={onFormSubmit}>
+                <div className="form">
+                  <div className="dx-fieldset">
+                    <div className="dx-fieldset-header">
+                      Choose Weighing Balance
+                    </div>
+                    <div className="dx-field">
+                      <div className="dx-field-label">Weighing Balance</div>
+                      <SelectBox
+                        className="dx-field-value"
+                        placeholder="Weighing Balance"
+                        dataSource={[
+                          "Mettler Toledo XPR204 - Capacity: 220 g, Readability: 0.1 mg (0.0001 g)",
+                          "Sartorius Cubis II MSA225S - Capacity: 220 g, Readability: 0.01 mg",
+                          "Ohaus Pioneer PX3202 - Capacity: 3200 g, Readability: 0.01 g",
+                        ]}
+                        value={type}
+                        disabled={error || saving}
+                        onValueChange={(text) => setType(text)}
+                      >
+                        <Validator>
+                          <RequiredRule message="Calibration type is required" />
+                        </Validator>
+                      </SelectBox>
+                    </div>
+                  </div>
+                  <div className="dx-field">
+                    <div className="dx-field-label">
+                      <ValidationSummary id="summaryMain" />
+                    </div>
+                  </div>
+                  <div className="dx-field">
+                    <div className="dx-field-label"></div>
+                    <Button
+                      width="100%"
+                      type={saving ? "normal" : "default"}
+                      disabled={loading || error || saving}
+                      useSubmitBehavior={true}
+                    >
+                      <LoadIndicator
+                        className="button-indicator"
+                        visible={saving}
+                      />
+                      <span className="dx-button-text">Next</span>
+                    </Button>
+                  </div>
+                  <div className="dx-field">
+                    <div className="dx-field-label"></div>
+                    <Button
+                      width="100%"
+                      type={"normal"}
+                      disabled={loading || error || saving}
+                      onClick={() => setPreviousStage()}
+                    >
+                      <LoadIndicator
+                        className="button-indicator"
+                        visible={saving}
+                      />
+                      <span className="dx-button-text">Previous</span>
+                    </Button>
+                  </div>
+                </div>
+              </form>
+            )}
+            {stage == 3 && (
+              <form id="formMain" onSubmit={onFormSubmit}>
+                <div className="form">
+                  <div className="dx-fieldset">
+                    <div className="dx-fieldset-header">
+                      Calibration Setup
+                    </div>
+                    <div className="dx-field">
+                      <div className="dx-field-label">Method</div>
+                      <SelectBox
+                        className="dx-field-value"
+                        placeholder="External weights"
+                        dataSource={[
+                          "",
+                        ]}
+                        value={type}
+                        disabled={error || saving}
+                        onValueChange={(text) => setType(text)}
+                      >
+                        <Validator>
+                          <RequiredRule message="Calibration method is required" />
+                        </Validator>
+                      </SelectBox>
+                    </div>
+                  </div>
+                  <div className="dx-field">
+                    <div className="dx-field-label">
+                      <ValidationSummary id="summaryMain" />
+                    </div>
+                  </div>
+                  <div className="dx-field">
+                    <div className="dx-field-label"></div>
+                    <Button
+                      width="100%"
+                      type={saving ? "normal" : "default"}
+                      disabled={loading || error || saving}
+                      useSubmitBehavior={true}
+                    >
+                      <LoadIndicator
+                        className="button-indicator"
+                        visible={saving}
+                      />
+                      <span className="dx-button-text">Next</span>
+                    </Button>
+                  </div>
+                  <div className="dx-field">
+                    <div className="dx-field-label"></div>
+                    <Button
+                      width="100%"
+                      type={"normal"}
+                      disabled={loading || error || saving}
+                      onClick={() => setPreviousStage()}
+                    >
+                      <LoadIndicator
+                        className="button-indicator"
+                        visible={saving}
+                      />
+                      <span className="dx-button-text">Previous</span>
+                    </Button>
+                  </div>
+                </div>
+              </form>
+            )}
+          </Card>
+        </Col>
+      </Row>
+    </div>
+  );
+};
+
+export default ExpenseEarningGroupEdit;
