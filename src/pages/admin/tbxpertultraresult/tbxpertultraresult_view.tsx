@@ -359,7 +359,7 @@ const AdminTBXpertUltraResult = () => {
             <div className="dx-field">
               <div className="dx-field-label">Result Interpretable</div>
              <div className="dx-field-value-static">
-               <strong>{tbxpertultraresultDetail.result_nterpretable}</strong>
+               <strong>{tbxpertultraresultDetail.result_interpretable}</strong>
             </div>
             </div>
             <div className="dx-field">
@@ -395,31 +395,31 @@ const AdminTBXpertUltraResult = () => {
             <div className="dx-field">
               <div className="dx-field-label">IS1081-IS6110</div>
              <div className="dx-field-value-static">
-               <strong>{tbxpertultraresultDetail.is1081_IS6110}</strong>
+               <strong>{tbxpertultraresultDetail.is1081_is6110}</strong>
             </div>
             </div>
             <div className="dx-field">
               <div className="dx-field-label">rpoB1</div>
              <div className="dx-field-value-static">
-               <strong>{tbxpertultraresultDetail.rpoB1}</strong>
+               <strong>{tbxpertultraresultDetail.rpob1}</strong>
             </div>
             </div>
             <div className="dx-field">
               <div className="dx-field-label">rpoB2</div>
              <div className="dx-field-value-static">
-               <strong>{tbxpertultraresultDetail.rpoB2}</strong>
+               <strong>{tbxpertultraresultDetail.rpob2}</strong>
             </div>
             </div>
             <div className="dx-field">
               <div className="dx-field-label">rpoB3</div>
              <div className="dx-field-value-static">
-               <strong>{tbxpertultraresultDetail.rpoB3}</strong>
+               <strong>{tbxpertultraresultDetail.rpob3}</strong>
             </div>
             </div>
             <div className="dx-field">
               <div className="dx-field-label">rpoB4</div>
              <div className="dx-field-value-static">
-               <strong>{tbxpertultraresultDetail.rpoB4}</strong>
+               <strong>{tbxpertultraresultDetail.rpob4}</strong>
             </div>
             </div>
             <div className="dx-field">

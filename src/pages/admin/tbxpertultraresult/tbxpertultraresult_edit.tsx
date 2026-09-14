@@ -50,16 +50,16 @@ const TBXpertUltraResultEdit = () => {
   const [cycle, setCycle] = useState<undefined | string>(undefined);
   const [method, setMethod] = useState<undefined | string>(undefined);
   const [method_sample, setMethodSample] = useState<undefined | string>(undefined);
-  const [result_nterpretable, setResultInterpretable] = useState<undefined | string>(undefined);
+  const [result_interpretable, setResultInterpretable] = useState<undefined | string>(undefined);
   const [tb_detection_result, setTBDetectionResult] = useState<undefined | string>(undefined);
   const [rif_result, setRifResult] = useState<undefined | string>(undefined);
   const [uninterpretable_result, setUninterpretableResult] = useState<undefined | string>(undefined);
   const [ultra_spc, setUltraSPC] = useState<undefined | number>(undefined);
-  const [is1081_IS6110, setIS1081IS6110] = useState<undefined | number>(undefined);
-  const [rpoB1, setrpoB1] = useState<undefined | number>(undefined);
-  const [rpoB2, setrpoB2] = useState<undefined | number>(undefined);
-  const [rpoB3, setrpoB3] = useState<undefined | number>(undefined);
-  const [rpoB4, setrpoB4] = useState<undefined | number>(undefined);
+  const [is1081_is6110, setIS1081IS6110] = useState<undefined | number>(undefined);
+  const [rpob1, setrpoB1] = useState<undefined | number>(undefined);
+  const [rpob2, setrpoB2] = useState<undefined | number>(undefined);
+  const [rpob3, setrpoB3] = useState<undefined | number>(undefined);
+  const [rpob4, setrpoB4] = useState<undefined | number>(undefined);
   const [xpert_module_number, setXpertModuleNumber] = useState<undefined | number>(undefined);
 
 
@@ -152,16 +152,16 @@ const TBXpertUltraResultEdit = () => {
     
     setMethodSample(data.method_sample_id);
     
-    setResultInterpretable(data.result_nterpretable);
+    setResultInterpretable(data.result_interpretable);
     setTBDetectionResult(data.tb_detection_result);
     setRifResult(data.rif_result);
     setUninterpretableResult(data.uninterpretable_result);
     setUltraSPC(data.ultra_spc);
-    setIS1081IS6110(data.is1081_IS6110);
-    setrpoB1(data.rpoB1);
-    setrpoB2(data.rpoB2);
-    setrpoB3(data.rpoB3);
-    setrpoB4(data.rpoB4);
+    setIS1081IS6110(data.is1081_is6110);
+    setrpoB1(data.rpob1);
+    setrpoB2(data.rpob2);
+    setrpoB3(data.rpob3);
+    setrpoB4(data.rpob4);
     setXpertModuleNumber(data.xpert_module_number);
   };
 
@@ -198,16 +198,16 @@ const TBXpertUltraResultEdit = () => {
       pt_cycle_id: cycle,
       method_id: method,
       method_sample_id: method_sample,
-      result_nterpretable: result_nterpretable,
+      result_interpretable: result_interpretable,
       tb_detection_result: tb_detection_result,
       rif_result: rif_result,
       uninterpretable_result: uninterpretable_result,
       ultra_spc: ultra_spc,
-      is1081_IS6110: is1081_IS6110,
-      rpoB1: rpoB1,
-      rpoB2: rpoB2,
-      rpoB3: rpoB3,
-      rpoB4: rpoB4,
+      is1081_is6110: is1081_is6110,
+      rpob1: rpob1,
+      rpob2: rpob2,
+      rpob3: rpob3,
+      rpob4: rpob4,
       xpert_module_number: xpert_module_number,
       // approval
       status_id: Assist.STATUS_SUBMITTED,
@@ -443,7 +443,7 @@ const TBXpertUltraResultEdit = () => {
                       placeholder="Result Interpretable"
                       displayFormat={"dd MMMM yyyy"}
                       dateSerializationFormat="yyyy-MM-dd"
-                      value={result_nterpretable}
+                      value={result_interpretable}
                       disabled={error || saving}
                       onValueChange={(text) => setResultInterpretable(text)}
                     >
@@ -523,7 +523,7 @@ const TBXpertUltraResultEdit = () => {
                       placeholder="IS1081-IS6110"
                       displayFormat={"dd MMMM yyyy"}
                       dateSerializationFormat="yyyy-MM-dd"
-                      value={is1081_IS6110}
+                      value={is1081_is6110}
                       disabled={error || saving}
                       onValueChange={(text) => setIS1081IS6110(text)}
                     >
@@ -539,7 +539,7 @@ const TBXpertUltraResultEdit = () => {
                       placeholder="rpoB1"
                       displayFormat={"dd MMMM yyyy"}
                       dateSerializationFormat="yyyy-MM-dd"
-                      value={rpoB1}
+                      value={rpob1}
                       disabled={error || saving}
                       onValueChange={(text) => setrpoB1(text)}
                     >
@@ -555,7 +555,7 @@ const TBXpertUltraResultEdit = () => {
                       placeholder="rpoB2"
                       displayFormat={"dd MMMM yyyy"}
                       dateSerializationFormat="yyyy-MM-dd"
-                      value={rpoB2}
+                      value={rpob2}
                       disabled={error || saving}
                       onValueChange={(text) => setrpoB2(text)}
                     >
@@ -571,7 +571,7 @@ const TBXpertUltraResultEdit = () => {
                       placeholder="rpoB3"
                       displayFormat={"dd MMMM yyyy"}
                       dateSerializationFormat="yyyy-MM-dd"
-                      value={rpoB3}
+                      value={rpob3}
                       disabled={error || saving}
                       onValueChange={(text) => setrpoB3(text)}
                     >
@@ -587,7 +587,7 @@ const TBXpertUltraResultEdit = () => {
                       placeholder="rpoB4"
                       displayFormat={"dd MMMM yyyy"}
                       dateSerializationFormat="yyyy-MM-dd"
-                      value={rpoB4}
+                      value={rpob4}
                       disabled={error || saving}
                       onValueChange={(text) => setrpoB4(text)}
                     >

@@ -67,6 +67,21 @@ import {
   AdminTBXpertUltraResultListPage,
   AdminTBXpertUltraResultEditPage,
   AdminTBXpertUltraResultViewPage,
+  // TBXpertXDRResult
+  AdminTBXpertXDRResultListPage,
+  AdminTBXpertXDRResultEditPage,
+  AdminTBXpertXDRResultViewPage,
+  // HIVVLResult
+  AdminHIVVLResultListPage,
+  AdminHIVVLResultEditPage,
+  AdminHIVVLResultViewPage,
+  // HIVEIDResult
+  AdminHIVEIDResultListPage,
+  AdminHIVEIDResultEditPage,
+  AdminHIVEIDResultViewPage,
+  // Evaluation and reports
+  AdminEvaluationViewPage,
+  PTReportViewPage,
   // Enrollment
   AdminEnrollmentListPage,
   AdminEnrollmentEditPage,
@@ -80,6 +95,17 @@ import {
   AdminRoleEditPage,
   AdminRoleViewPage,
   FacilityEnrollmentListPage,
+  FacilityTBXpertXDRResultListPage,
+  FacilityTBXpertXDRResultEditPage,
+  FacilityTBXpertXDRResultViewPage,
+  FacilityHIVVLResultListPage,
+  FacilityHIVVLResultEditPage,
+  FacilityHIVVLResultViewPage,
+  FacilityHIVEIDResultListPage,
+  FacilityHIVEIDResultEditPage,
+  FacilityHIVEIDResultViewPage,
+  FacilityPerformanceListPage,
+  FacilityPerformanceViewPage,
   FacilityTBXpertUltraResultListPage,
   FacilityTBXpertUltraResultEditPage,
   FacilityTBXpertUltraResultViewPage,
@@ -168,6 +194,26 @@ function App() {
           <Route path="/admin/tb-xpert-ultra-results/edit/:eId" element={<AdminTBXpertUltraResultEditPage/>} />
           <Route path="/admin/tb-xpert-ultra-results/add" element={<AdminTBXpertUltraResultEditPage/>} />
           <Route path="/admin/tb-xpert-ultra-results/view/:eId" element={<AdminTBXpertUltraResultViewPage/>} />
+          {/* TB Xpert XDR Result */}
+          <Route path="/admin/tb-xpert-xdr-results/list" element={<AdminTBXpertXDRResultListPage/>} />
+          <Route path="/admin/tb-xpert-xdr-results/edit/:eId" element={<AdminTBXpertXDRResultEditPage/>} />
+          <Route path="/admin/tb-xpert-xdr-results/add" element={<AdminTBXpertXDRResultEditPage/>} />
+          <Route path="/admin/tb-xpert-xdr-results/view/:eId" element={<AdminTBXpertXDRResultViewPage/>} />
+          {/* HIV-1 Viral Load Result */}
+          <Route path="/admin/hiv-vl-results/list" element={<AdminHIVVLResultListPage/>} />
+          <Route path="/admin/hiv-vl-results/edit/:eId" element={<AdminHIVVLResultEditPage/>} />
+          <Route path="/admin/hiv-vl-results/add" element={<AdminHIVVLResultEditPage/>} />
+          <Route path="/admin/hiv-vl-results/view/:eId" element={<AdminHIVVLResultViewPage/>} />
+          {/* HIV-1 EID Result */}
+          <Route path="/admin/hiv-eid-results/list" element={<AdminHIVEIDResultListPage/>} />
+          <Route path="/admin/hiv-eid-results/edit/:eId" element={<AdminHIVEIDResultEditPage/>} />
+          <Route path="/admin/hiv-eid-results/add" element={<AdminHIVEIDResultEditPage/>} />
+          <Route path="/admin/hiv-eid-results/view/:eId" element={<AdminHIVEIDResultViewPage/>} />
+          {/* Round Evaluation */}
+          <Route path="/admin/pt-cycles/evaluation/:eId" element={<AdminEvaluationViewPage/>} />
+          {/* PT Performance Report */}
+          <Route path="/admin/reports/pt-performance" element={<PTReportViewPage/>} />
+          <Route path="/admin/reports/pt-performance/:eId" element={<PTReportViewPage/>} />
           {/* Enrollment */}
           <Route path="/admin/enrollments/list" element={<AdminEnrollmentListPage/>} />
           <Route path="/admin/enrollments/edit/:eId" element={<AdminEnrollmentEditPage/>} />
@@ -188,6 +234,27 @@ function App() {
 
          {/* facility Enrollment */}
           <Route path="/facility/enrollments/list" element={<FacilityEnrollmentListPage/>} />
+
+         {/* facility Performance */}
+          <Route path="/facility/performance/list" element={<FacilityPerformanceListPage/>} />
+          <Route path="/facility/performance/view/:eId" element={<FacilityPerformanceViewPage/>} />
+          <Route path="/facility/reports/pt-performance" element={<PTReportViewPage/>} />
+          <Route path="/facility/reports/pt-performance/:eId" element={<PTReportViewPage/>} />
+
+         {/* facility HIV-1 EID Result */}
+          <Route path="/facility/hiv-eid-results/list" element={<FacilityHIVEIDResultListPage/>} />
+          <Route path="/facility/hiv-eid-results/edit/:eId" element={<FacilityHIVEIDResultEditPage/>} />
+          <Route path="/facility/hiv-eid-results/view/:eId" element={<FacilityHIVEIDResultViewPage/>} />
+
+         {/* facility HIV-1 Viral Load Result */}
+          <Route path="/facility/hiv-vl-results/list" element={<FacilityHIVVLResultListPage/>} />
+          <Route path="/facility/hiv-vl-results/edit/:eId" element={<FacilityHIVVLResultEditPage/>} />
+          <Route path="/facility/hiv-vl-results/view/:eId" element={<FacilityHIVVLResultViewPage/>} />
+
+         {/* facility TB Xpert XDR Result */}
+          <Route path="/facility/tb-xpert-xdr-results/list" element={<FacilityTBXpertXDRResultListPage/>} />
+          <Route path="/facility/tb-xpert-xdr-results/edit/:eId" element={<FacilityTBXpertXDRResultEditPage/>} />
+          <Route path="/facility/tb-xpert-xdr-results/view/:eId" element={<FacilityTBXpertXDRResultViewPage/>} />
 
          {/* facility TB Xpert Ultra Result */}
           <Route path="/facility/tb-xpert-ultra-results/list" element={<FacilityTBXpertUltraResultListPage/>} />

@@ -186,7 +186,7 @@ const AdminTBXpertUltraResultList = () => {
                 hidingPriority={15}
               ></Column>
               <Column
-                dataField="result_nterpretable"
+                dataField="result_interpretable"
                 caption="Result Interpretable"
                 hidingPriority={15}
               ></Column>
@@ -216,27 +216,27 @@ const AdminTBXpertUltraResultList = () => {
                 hidingPriority={11}
               ></Column>
               <Column
-                dataField="is1081_IS6110"
+                dataField="is1081_is6110"
                 caption="IS1081-IS6110"
                 hidingPriority={10}
               ></Column>
               <Column
-                dataField="rpoB1"
+                dataField="rpob1"
                 caption="rpoB1"
                 hidingPriority={9}
               ></Column>
               <Column
-                dataField="rpoB2"
+                dataField="rpob2"
                 caption="rpoB2"
                 hidingPriority={8}
               ></Column>
               <Column
-                dataField="rpoB3"
+                dataField="rpob3"
                 caption="rpoB3"
                 hidingPriority={7}
               ></Column>
               <Column
-                dataField="rpoB4"
+                dataField="rpob4"
                 caption="rpoB4"
                 hidingPriority={6}
               ></Column>

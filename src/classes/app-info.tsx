@@ -2,6 +2,11 @@ const AppInfo = {
   appName: "EQA",
   appCode: "EQA",
   apiUrl: "http://127.0.0.1:8800/",
+  // The PT reports are rendered by XtraReports from the ASP.NET reporting
+  // service. Until that is deployed this points at the placeholder renderer
+  // in the FastAPI backend; the paths are identical, so moving over is a
+  // change to this one line.
+  reportApiUrl: "http://127.0.0.1:8800/",
   onlineApiUrl: "",
   localApiUrl: "http://127.0.0.1:8700/",
   configApiUrl: "sacco-config/1",

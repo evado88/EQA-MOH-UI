@@ -429,6 +429,62 @@ class Assist {
   }
 
   /**
+   * Fetches a PDF from the reporting service and returns a URL the viewer can
+   * display, along with the filename the service suggested.
+   * @param title
+   * @param url path on the reporting service
+   * @returns { url, filename, blob }
+   */
+  static async loadPdf(title: string, url: string): Promise<any> {
+    Assist.log(
+      `Starting to render ${title} using url ${AppInfo.reportApiUrl}${url}`,
+      "log",
+    );
+
+    return new Promise(function (resolve, reject) {
+      axios
+        .get(`${AppInfo.reportApiUrl}${url}`, { responseType: "blob" })
+        .then((response) => {
+          if (response.status !== 200) {
+            reject(`Unable to render ${title}. Error code ${response.status}`);
+            return;
+          }
+
+          //the service names the file in its Content-Disposition header
+          let filename = `${title}.pdf`;
+          const disposition = response.headers["content-disposition"];
+          if (disposition) {
+            const match = /filename="?([^"]+)"?/.exec(disposition);
+            if (match) filename = match[1];
+          }
+
+          const blob = new Blob([response.data], { type: "application/pdf" });
+          resolve({ url: URL.createObjectURL(blob), filename: filename, blob: blob });
+        })
+        .catch(async (err) => {
+          Assist.log(`An error occured when rendering ${title}`, "error");
+
+          let message = `Unable to render ${title}`;
+
+          //an error response is JSON even though a PDF was asked for
+          if (err.response && err.response.data) {
+            try {
+              const text = await err.response.data.text();
+              const parsed = JSON.parse(text);
+              if (parsed.detail) message += `: ${parsed.detail}`;
+            } catch (x) {
+              message += ": Please try again";
+            }
+          } else {
+            message += ": Please try again";
+          }
+
+          reject(message);
+        });
+    });
+  }
+
+  /**
    * Load data from the specified URL
    * @param title
    * @param url

@@ -5,6 +5,7 @@ import { Row } from "../../../components/row";
 import { Col } from "../../../components/column";
 import DataGrid, {
   Column,
+  Button as GridButton,
   Pager,
   Paging,
   FilterRow,
@@ -209,6 +210,18 @@ const AdminPTCycleList = () => {
                 format="dd MMM yyy HH:MM"
                 hidingPriority={1}
               ></Column>
+              <Column type="buttons" caption="" width={110}>
+                <GridButton
+                  text="Evaluation"
+                  hint="Scores, statistics and participant standing"
+                  visible={(e: any) =>
+                    e.row.data.pt_cyle_status_id >= Assist.PT_CYCLE_SAMPLES_SHIPPED
+                  }
+                  onClick={(e: any) =>
+                    navigate(`/admin/pt-cycles/evaluation/${e.row.data.id}`)
+                  }
+                />
+              </Column>
             </DataGrid>
           </Card>
         </Col>

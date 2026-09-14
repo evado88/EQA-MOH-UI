@@ -505,6 +505,34 @@ const AdminPTCycle = () => {
           </Card>
         </Col>
         <Col sz={12} sm={12} lg={5}>
+          {isApproved() &&
+            ptcycleDetail.pt_cyle_status_id >=
+              Assist.PT_CYCLE_SAMPLES_SHIPPED && (
+              <Card title="Evaluation" showHeader={true}>
+                <div className="form">
+                  <div className="dx-field">
+                    <div className="dx-field-value-static">
+                      Scores, sample statistics and participant standing for
+                      this round.
+                    </div>
+                  </div>
+                  <div className="dx-field">
+                    <div className="dx-field-label"></div>
+                    <div className="dx-field-value">
+                      <Button
+                        width="100%"
+                        type="normal"
+                        icon="chart"
+                        text="Open Evaluation"
+                        onClick={() =>
+                          navigate(`/admin/pt-cycles/evaluation/${eId}`)
+                        }
+                      />
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            )}
           {isApproved() && (
             <Card title="Cycle Status" showHeader={true}>
               <div className="form">

@@ -5,45 +5,54 @@ import { Row } from "../../../components/row";
 import { Col } from "../../../components/column";
 import SelectBox from "devextreme-react/select-box";
 import { TextBox } from "devextreme-react/text-box";
-import {
-  Validator,
-  RequiredRule,
-  AsyncRule,
-  CompareRule,
-  CustomRule,
-} from "devextreme-react/validator";
-import TextArea from "devextreme-react/text-area";
+import { Validator, RequiredRule } from "devextreme-react/validator";
 import { NumberBox } from "devextreme-react/number-box";
 import Button from "devextreme-react/button";
 import ValidationSummary from "devextreme-react/validation-summary";
 import { LoadPanel } from "devextreme-react/load-panel";
 import DateBox from "devextreme-react/date-box";
-import { useTheme } from "../../../context/ThemeContext";
 import { useAuth } from "../../../context/AuthContext";
 import PageConfig from "../../../classes/page-config";
 import Assist from "../../../classes/assist";
 import { LoadIndicator } from "devextreme-react/load-indicator";
 import { useNavigate, useParams } from "react-router-dom";
-import HtmlEditor, {
-  Toolbar,
-  Item,
-  MediaResizing,
-} from "devextreme-react/html-editor";
+import HtmlEditor, { MediaResizing } from "devextreme-react/html-editor";
 import AppInfo from "../../../classes/app-info";
 import { confirm } from "devextreme/ui/dialog";
 
-const TBXpertUltraResultEdit = () => {
+// the four drug resistance results on form CDL-PT-F-027
+const DRUG_RESULTS = [
+  { field: "inh_result", label: "INH Result" },
+  { field: "flq_result", label: "FLQ Result" },
+  { field: "amk_result", label: "AMK Result" },
+  { field: "eth_result", label: "ETH Result" },
+];
+
+// the nine cycle threshold probes an Xpert MTB/XDR run reports
+const CT_VALUES = [
+  { field: "spc_ahpc", label: "SPC-ahpC" },
+  { field: "inha", label: "inhA" },
+  { field: "katg", label: "KatG" },
+  { field: "fabg1", label: "fabG1" },
+  { field: "gyra1", label: "gyrA1" },
+  { field: "gyra2", label: "gyrA2" },
+  { field: "gyra3", label: "gyrA3" },
+  { field: "gyrb2", label: "gyrB2" },
+  { field: "rrs", label: "rrs" },
+];
+
+const AdminTBXpertXDRResultEdit = () => {
   //user
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { eId } = useParams(); // Destructure the parameter directly
+  const { eId } = useParams();
 
   //name
   const [name, setName] = useState<undefined | string>(undefined);
   const [description, setDescription] = useState<undefined | string>(undefined);
 
   //properties
-  const [scheme, setLabType] = useState<undefined | string>(undefined);
+  const [scheme, setScheme] = useState<undefined | string>(undefined);
   const [laboratory, setLaboratory] = useState<undefined | string>(undefined);
   const [service, setService] = useState<undefined | string>(undefined);
   const [enrollment, setEnrollment] = useState<undefined | string>(undefined);
@@ -52,31 +61,25 @@ const TBXpertUltraResultEdit = () => {
   const [method_sample, setMethodSample] = useState<undefined | string>(
     undefined,
   );
+
+  //results
   const [date_tested, setDateTested] = useState<undefined | Date | string>(
     undefined,
   );
-  const [error_code, setErrorCode] = useState<undefined | string>(undefined);
   const [result_interpretable, setResultInterpretable] = useState<
     undefined | string
   >(undefined);
   const [tb_detection_result, setTBDetectionResult] = useState<
     undefined | string
   >(undefined);
-  const [rif_result, setRifResult] = useState<undefined | string>(undefined);
+  //the four drug results and nine Ct probes are held together, since the form
+  //treats them as one block each
+  const [drugs, setDrugs] = useState<Record<string, string | undefined>>({});
+  const [cts, setCts] = useState<Record<string, number | undefined>>({});
   const [uninterpretable_result, setUninterpretableResult] = useState<
     undefined | string
   >(undefined);
-  const [ultra_spc, setUltraSPC] = useState<undefined | number>(undefined);
-  const [is1081_is6110, setIS1081IS6110] = useState<undefined | number>(
-    undefined,
-  );
-  const [rpob1, setrpoB1] = useState<undefined | number>(undefined);
-  const [rpob2, setrpoB2] = useState<undefined | number>(undefined);
-  const [rpob3, setrpoB3] = useState<undefined | number>(undefined);
-  const [rpob4, setrpoB4] = useState<undefined | number>(undefined);
-  const [xpert_module_number, setXpertModuleNumber] = useState<
-    undefined | string
-  >(undefined);
+  const [error_code, setErrorCode] = useState<undefined | string>(undefined);
 
   //set up data sources for relationship fields
   const [scheme_data, setscheme_data] = useState<Array<any> | any>([]);
@@ -96,17 +99,15 @@ const TBXpertUltraResultEdit = () => {
   const hasRun = useRef(false);
 
   const pageConfig = new PageConfig(
-    `TB Xpert Ultra Result`,
+    `TB Xpert XDR Result`,
     "",
     "",
-    "TB Xpert Ultra Result",
+    "TB Xpert XDR Result",
     "",
-    Assist.LABORATORY_ROLES,
+    Assist.ADMIN_ROLES,
   );
 
   pageConfig.Id = eId == undefined ? 0 : Number(eId);
-
-  //set up data sources for relationship fields
 
   useEffect(() => {
     //check if initialized
@@ -123,15 +124,11 @@ const TBXpertUltraResultEdit = () => {
     setLoading(true);
 
     setTimeout(() => {
-      Assist.loadData(
-        pageConfig.Title,
-        `tb-xpert-ultra-results/id/${pageConfig.Id}`,
-      )
+      Assist.loadData(pageConfig.Title, `tb-xpert-xdr-results/id/${pageConfig.Id}`)
         .then((data: any) => {
           setLoading(false);
           if (pageConfig.Id != 0) {
-            // only update values if valid id
-            updateVaues(data.tbxpertultraresult);
+            updateVaues(data.tbxpertxdrresult);
           }
           //set up data sources for relationship fields
           setscheme_data(data.schemeList);
@@ -158,61 +155,94 @@ const TBXpertUltraResultEdit = () => {
     setDescription(data.description);
 
     //properties
-    //set up data sources for relationship fields
-    setLabType(data.scheme_id);
-
+    setScheme(data.scheme_id);
     setLaboratory(data.lab_id);
-
     setService(data.service_id);
-
     setEnrollment(data.enrollment_id);
-
     setCycle(data.pt_cycle_id);
-
     setMethod(data.method_id);
-
     setMethodSample(data.method_sample_id);
 
+    //results
     setDateTested(data.date_tested ?? undefined);
     setResultInterpretable(data.result_interpretable);
     setTBDetectionResult(data.tb_detection_result);
-    setRifResult(data.rif_result);
     setUninterpretableResult(data.uninterpretable_result);
     setErrorCode(data.error_code);
-    setUltraSPC(data.ultra_spc);
-    setIS1081IS6110(data.is1081_is6110);
-    setrpoB1(data.rpob1);
-    setrpoB2(data.rpob2);
-    setrpoB3(data.rpob3);
-    setrpoB4(data.rpob4);
-    setXpertModuleNumber(data.xpert_module_number);
+
+    const nextDrugs: Record<string, string | undefined> = {};
+    DRUG_RESULTS.forEach((d) => (nextDrugs[d.field] = data[d.field] ?? undefined));
+    setDrugs(nextDrugs);
+
+    const nextCts: Record<string, number | undefined> = {};
+    CT_VALUES.forEach((c) => (nextCts[c.field] = data[c.field] ?? undefined));
+    setCts(nextCts);
+  };
+
+  const interpretableYes = result_interpretable === "Yes";
+  const interpretableNo = result_interpretable === "No";
+  const requiresErrorCode = uninterpretable_result === "ERROR";
+
+  //the XDR assay only reports resistance against a detected complex
+  const tbNotDetected = tb_detection_result === "NOT DETECTED";
+
+  const onResultInterpretableChange = (value: string | undefined) => {
+    setResultInterpretable(value);
+
+    if (value === "Yes") {
+      setUninterpretableResult(undefined);
+      setErrorCode(undefined);
+    } else if (value === "No") {
+      setTBDetectionResult(undefined);
+      setDrugs({});
+    } else {
+      setTBDetectionResult(undefined);
+      setDrugs({});
+      setUninterpretableResult(undefined);
+      setErrorCode(undefined);
+    }
+  };
+
+  const onTBDetectionChange = (value: string | undefined) => {
+    setTBDetectionResult(value);
+
+    //nothing to report resistance against, so the drug results become N/A
+    if (value === "NOT DETECTED") {
+      const na: Record<string, string> = {};
+      DRUG_RESULTS.forEach((d) => (na[d.field] = "N/A"));
+      setDrugs(na);
+    }
+  };
+
+  const onUninterpretableResultChange = (value: string | undefined) => {
+    setUninterpretableResult(value);
+    if (value !== "ERROR") {
+      setErrorCode(undefined);
+    }
   };
 
   const onFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    let result = confirm(
-      "Are you sure you want to submit this TB Xpert Ultra Result? You will not be able to change it afterwards.",
+    confirm(
+      "Are you sure you want to submit this TB Xpert XDR Result? You will not be able to change it afterwards.",
       "Confirm submission",
-    );
-    result.then((dialogResult) => {
+    ).then((dialogResult) => {
       if (dialogResult) {
-        submitTBXpertUltraResult(Assist.STATUS_SUBMITTED);
+        submitResult(Assist.STATUS_SUBMITTED);
       }
     });
   };
 
   //a panel is often captured over more than one sitting, so a lab can park a
   //partly filled form without it going for review
-  const onSaveDraft = () => {
-    submitTBXpertUltraResult(Assist.STATUS_DRAFT);
-  };
+  const onSaveDraft = () => submitResult(Assist.STATUS_DRAFT);
 
-  const submitTBXpertUltraResult = (statusId: number) => {
+  const submitResult = (statusId: number) => {
     setSaving(true);
 
     const isDraft = statusId == Assist.STATUS_DRAFT;
 
-    const postData = {
+    const postData: any = {
       //user
       user_id: user.userid,
       //name
@@ -226,21 +256,14 @@ const TBXpertUltraResultEdit = () => {
       pt_cycle_id: cycle,
       method_id: method,
       method_sample_id: method_sample,
+      //results
       date_tested: date_tested
         ? Assist.toMySQLFormat(new Date(date_tested), false)
         : null,
       result_interpretable: result_interpretable,
       tb_detection_result: tb_detection_result,
-      rif_result: rif_result,
       uninterpretable_result: uninterpretable_result,
       error_code: error_code,
-      ultra_spc: ultra_spc,
-      is1081_is6110: is1081_is6110,
-      rpob1: rpob1,
-      rpob2: rpob2,
-      rpob3: rpob3,
-      rpob4: rpob4,
-      xpert_module_number: xpert_module_number,
       // approval
       status_id: statusId,
       stage_id: isDraft
@@ -249,10 +272,13 @@ const TBXpertUltraResultEdit = () => {
       approval_levels: 1,
     };
 
+    DRUG_RESULTS.forEach((d) => (postData[d.field] = drugs[d.field] ?? null));
+    CT_VALUES.forEach((c) => (postData[c.field] = cts[c.field] ?? null));
+
     const url =
       pageConfig.Id == 0
-        ? `tb-xpert-ultra-results/create`
-        : `tb-xpert-ultra-results/update/${pageConfig.Id}`;
+        ? `tb-xpert-xdr-results/create`
+        : `tb-xpert-xdr-results/update/${pageConfig.Id}`;
 
     setTimeout(() => {
       Assist.postPutData(pageConfig.Title, url, postData, pageConfig.Id)
@@ -272,7 +298,7 @@ const TBXpertUltraResultEdit = () => {
             `You have successfully submitted the ${pageConfig.Title} for approval!`,
             "success",
           );
-          navigate(`/facility/tb-xpert-ultra-results/list`);
+          navigate(`/admin/tb-xpert-xdr-results/list`);
         })
         .catch((message) => {
           setSaving(false);
@@ -281,40 +307,7 @@ const TBXpertUltraResultEdit = () => {
     }, Assist.DEV_DELAY);
   };
 
-  const toolbar: any = useMemo(() => {
-    return AppInfo.htmlToolbar;
-  }, []);
-
-  const resultInterpretableYes = result_interpretable === "Yes";
-  const resultInterpretableNo = result_interpretable === "No";
-
-  //an error code only belongs to an ERROR result
-  const requiresErrorCode = uninterpretable_result === "ERROR";
-
-  const onResultInterpretableChange = (value: string | undefined) => {
-    setResultInterpretable(value);
-
-    if (value === "Yes") {
-      setUninterpretableResult(undefined);
-      setErrorCode(undefined);
-    } else if (value === "No") {
-      setTBDetectionResult(undefined);
-      setRifResult(undefined);
-    } else {
-      setTBDetectionResult(undefined);
-      setRifResult(undefined);
-      setUninterpretableResult(undefined);
-      setErrorCode(undefined);
-    }
-  };
-
-  const onUninterpretableResultChange = (value: string | undefined) => {
-    setUninterpretableResult(value);
-
-    if (value !== "ERROR") {
-      setErrorCode(undefined);
-    }
-  };
+  const toolbar: any = useMemo(() => AppInfo.htmlToolbar, []);
 
   return (
     <div id="pageRoot" className="page-content">
@@ -329,13 +322,11 @@ const TBXpertUltraResultEdit = () => {
       />
       <Titlebar
         title={`${pageConfig.verb()} ${pageConfig.Title}`}
-        section={"Configuration"}
+        section={"PT Results"}
         icon={"gear"}
         url="#"
       ></Titlebar>
-      {/* end widget */}
 
-      {/* chart start */}
       <Row>
         <Col sz={12} sm={12} lg={7}>
           <Card title="Properties" showHeader={true}>
@@ -359,6 +350,7 @@ const TBXpertUltraResultEdit = () => {
                     </TextBox>
                   </div>
                 </div>
+
                 <div className="dx-fieldset">
                   <div className="dx-fieldset-header">Scheme</div>
                   <div className="dx-field">
@@ -368,17 +360,13 @@ const TBXpertUltraResultEdit = () => {
                       placeholder="Scheme"
                       dataSource={scheme_data}
                       displayExpr={"name"}
-                      readOnly={true}
                       valueExpr={"id"}
+                      readOnly={true}
                       deferRendering={false}
                       value={scheme}
                       disabled={error || saving}
-                      onValueChange={(text) => setLabType(text)}
-                    >
-                      <Validator>
-                        <RequiredRule message="Scheme is required" />
-                      </Validator>
-                    </SelectBox>
+                      onValueChange={(text) => setScheme(text)}
+                    />
                   </div>
                   <div className="dx-field">
                     <div className="dx-field-label">Service</div>
@@ -386,18 +374,14 @@ const TBXpertUltraResultEdit = () => {
                       className="dx-field-value"
                       placeholder="Service"
                       dataSource={service_data}
-                      readOnly={true}
                       displayExpr={"name"}
                       valueExpr={"id"}
+                      readOnly={true}
                       deferRendering={false}
                       value={service}
                       disabled={error || saving}
                       onValueChange={(text) => setService(text)}
-                    >
-                      <Validator>
-                        <RequiredRule message="Service is required" />
-                      </Validator>
-                    </SelectBox>
+                    />
                   </div>
                   <div className="dx-field">
                     <div className="dx-field-label">Method</div>
@@ -406,17 +390,13 @@ const TBXpertUltraResultEdit = () => {
                       placeholder="Method"
                       dataSource={method_data}
                       displayExpr={"name"}
-                      readOnly={true}
                       valueExpr={"id"}
+                      readOnly={true}
                       deferRendering={false}
                       value={method}
                       disabled={error || saving}
                       onValueChange={(text) => setMethod(text)}
-                    >
-                      <Validator>
-                        <RequiredRule message="Method is required" />
-                      </Validator>
-                    </SelectBox>
+                    />
                   </div>
                   <div className="dx-field">
                     <div className="dx-field-label">Method Sample</div>
@@ -425,19 +405,16 @@ const TBXpertUltraResultEdit = () => {
                       placeholder="Method Sample"
                       dataSource={method_sample_data}
                       displayExpr={"name"}
-                      readOnly={true}
                       valueExpr={"id"}
+                      readOnly={true}
                       deferRendering={false}
                       value={method_sample}
                       disabled={error || saving}
                       onValueChange={(text) => setMethodSample(text)}
-                    >
-                      <Validator>
-                        <RequiredRule message="Method Sample is required" />
-                      </Validator>
-                    </SelectBox>
+                    />
                   </div>
                 </div>
+
                 <div className="dx-fieldset">
                   <div className="dx-fieldset-header">Enrollment</div>
                   <div className="dx-field">
@@ -445,38 +422,30 @@ const TBXpertUltraResultEdit = () => {
                     <SelectBox
                       className="dx-field-value"
                       placeholder="Laboratory"
-                      readOnly={true}
                       dataSource={laboratory_data}
                       displayExpr={"name"}
                       valueExpr={"id"}
+                      readOnly={true}
                       deferRendering={false}
                       value={laboratory}
                       disabled={error || saving}
                       onValueChange={(text) => setLaboratory(text)}
-                    >
-                      <Validator>
-                        <RequiredRule message="Laboratory is required" />
-                      </Validator>
-                    </SelectBox>
+                    />
                   </div>
                   <div className="dx-field">
                     <div className="dx-field-label">Enrollment</div>
                     <SelectBox
                       className="dx-field-value"
                       placeholder="Enrollment"
-                      readOnly={true}
                       dataSource={enrollment_data}
                       displayExpr={"name"}
                       valueExpr={"id"}
+                      readOnly={true}
                       deferRendering={false}
                       value={enrollment}
                       disabled={error || saving}
                       onValueChange={(text) => setEnrollment(text)}
-                    >
-                      <Validator>
-                        <RequiredRule message="Enrollment is required" />
-                      </Validator>
-                    </SelectBox>
+                    />
                   </div>
                   <div className="dx-field">
                     <div className="dx-field-label">Cycle</div>
@@ -486,17 +455,15 @@ const TBXpertUltraResultEdit = () => {
                       dataSource={cycle_data}
                       displayExpr={"name"}
                       valueExpr={"id"}
+                      readOnly={true}
                       deferRendering={false}
                       value={cycle}
                       disabled={error || saving}
                       onValueChange={(text) => setCycle(text)}
-                    >
-                      <Validator>
-                        <RequiredRule message="Cycle is required" />
-                      </Validator>
-                    </SelectBox>
+                    />
                   </div>
                 </div>
+
                 <div className="dx-fieldset">
                   <div className="dx-fieldset-header">Results</div>
                   <div className="dx-field">
@@ -536,41 +503,54 @@ const TBXpertUltraResultEdit = () => {
                     <SelectBox
                       className="dx-field-value"
                       placeholder="TB Detection Result"
-                      dataSource={[
-                        "NOT DETECTED",
-                        "TRACE",
-                        "VERY LOW",
-                        "LOW",
-                        "MEDIUM",
-                        "HIGH",
-                      ]}
+                      dataSource={["NOT DETECTED", "DETECTED"]}
                       value={tb_detection_result}
-                      disabled={error || saving || !resultInterpretableYes}
-                      onValueChange={(text) => setTBDetectionResult(text)}
+                      disabled={error || saving || !interpretableYes}
+                      onValueChange={onTBDetectionChange}
                     >
                       <Validator>
-                        {resultInterpretableYes && (
+                        {interpretableYes && (
                           <RequiredRule message="TB Detection Result is required" />
                         )}
                       </Validator>
                     </SelectBox>
                   </div>
-                  <div className="dx-field">
-                    <div className="dx-field-label">Rif Result</div>
-                    <SelectBox
-                      className="dx-field-value"
-                      placeholder="Rif Result"
-                      dataSource={["N/A", "NOT DETECTED", "DETECTED"]}
-                      value={rif_result}
-                      disabled={error || saving || !resultInterpretableYes}
-                      onValueChange={(text) => setRifResult(text)}
-                    >
-                      <Validator>
-                        {resultInterpretableYes && (
-                          <RequiredRule message="Rif Result is required" />
-                        )}
-                      </Validator>
-                    </SelectBox>
+                </div>
+
+                <div className="dx-fieldset">
+                  <div className="dx-fieldset-header">Drug Resistance</div>
+                  {DRUG_RESULTS.map((drug) => (
+                    <div className="dx-field" key={drug.field}>
+                      <div className="dx-field-label">{drug.label}</div>
+                      <SelectBox
+                        className="dx-field-value"
+                        placeholder={drug.label}
+                        dataSource={
+                          tbNotDetected
+                            ? ["N/A"]
+                            : ["N/A", "NOT DETECTED", "DETECTED"]
+                        }
+                        value={drugs[drug.field]}
+                        disabled={error || saving || !interpretableYes}
+                        onValueChange={(value) =>
+                          setDrugs({ ...drugs, [drug.field]: value })
+                        }
+                      >
+                        <Validator>
+                          {interpretableYes && (
+                            <RequiredRule
+                              message={`${drug.label} is required`}
+                            />
+                          )}
+                        </Validator>
+                      </SelectBox>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="dx-fieldset">
+                  <div className="dx-fieldset-header">
+                    Uninterpretable Result
                   </div>
                   <div className="dx-field">
                     <div className="dx-field-label">Uninterpretable Result</div>
@@ -584,11 +564,11 @@ const TBXpertUltraResultEdit = () => {
                         "INDETERMINATE",
                       ]}
                       value={uninterpretable_result}
-                      disabled={error || saving || !resultInterpretableNo}
+                      disabled={error || saving || !interpretableNo}
                       onValueChange={onUninterpretableResultChange}
                     >
                       <Validator>
-                        {resultInterpretableNo && (
+                        {interpretableNo && (
                           <RequiredRule message="Uninterpretable Result is required" />
                         )}
                       </Validator>
@@ -610,119 +590,38 @@ const TBXpertUltraResultEdit = () => {
                       </Validator>
                     </TextBox>
                   </div>
-                  <div className="dx-field">
-                    <div className="dx-field-label">Ultra SPC</div>
-                    <NumberBox
-                      className="dx-field-value"
-                      placeholder="Ultra SPC"
-                      value={ultra_spc}
-                      disabled={error || saving || !resultInterpretableYes}
-                      onValueChange={(text) => setUltraSPC(text)}
-                    >
-                      <Validator>
-                        {resultInterpretableYes && (
-                          <RequiredRule message="Ultra SPC is required" />
-                        )}
-                      </Validator>
-                    </NumberBox>
-                  </div>
-                  <div className="dx-field">
-                    <div className="dx-field-label">IS1081-IS6110</div>
-                    <NumberBox
-                      className="dx-field-value"
-                      placeholder="IS1081-IS6110"
-                      value={is1081_is6110}
-                      disabled={error || saving || !resultInterpretableYes}
-                      onValueChange={(text) => setIS1081IS6110(text)}
-                    >
-                      <Validator>
-                        {resultInterpretableYes && (
-                          <RequiredRule message="IS1081-IS6110 is required" />
-                        )}
-                      </Validator>
-                    </NumberBox>
-                  </div>
-                  <div className="dx-field">
-                    <div className="dx-field-label">rpoB1</div>
-                    <NumberBox
-                      className="dx-field-value"
-                      placeholder="rpoB1"
-                      value={rpob1}
-                      disabled={error || saving || !resultInterpretableYes}
-                      onValueChange={(text) => setrpoB1(text)}
-                    >
-                      <Validator>
-                        {resultInterpretableYes && (
-                          <RequiredRule message="rpoB1 is required" />
-                        )}
-                      </Validator>
-                    </NumberBox>
-                  </div>
-                  <div className="dx-field">
-                    <div className="dx-field-label">rpoB2</div>
-                    <NumberBox
-                      className="dx-field-value"
-                      placeholder="rpoB2"
-                      value={rpob2}
-                      disabled={error || saving || !resultInterpretableYes}
-                      onValueChange={(text) => setrpoB2(text)}
-                    >
-                      <Validator>
-                        {resultInterpretableYes && (
-                          <RequiredRule message="rpoB2 is required" />
-                        )}
-                      </Validator>
-                    </NumberBox>
-                  </div>
-                  <div className="dx-field">
-                    <div className="dx-field-label">rpoB3</div>
-                    <NumberBox
-                      className="dx-field-value"
-                      placeholder="rpoB3"
-                      value={rpob3}
-                      disabled={error || saving || !resultInterpretableYes}
-                      onValueChange={(text) => setrpoB3(text)}
-                    >
-                      <Validator>
-                        {resultInterpretableYes && (
-                          <RequiredRule message="rpoB3 is required" />
-                        )}
-                      </Validator>
-                    </NumberBox>
-                  </div>
-                  <div className="dx-field">
-                    <div className="dx-field-label">rpoB4</div>
-                    <NumberBox
-                      className="dx-field-value"
-                      placeholder="rpoB4"
-                      value={rpob4}
-                      disabled={error || saving || !resultInterpretableYes}
-                      onValueChange={(text) => setrpoB4(text)}
-                    >
-                      <Validator>
-                        {resultInterpretableYes && (
-                          <RequiredRule message="rpoB4 is required" />
-                        )}
-                      </Validator>
-                    </NumberBox>
-                  </div>
-                  <div className="dx-field">
-                    <div className="dx-field-label">Xpert Module Number</div>
-                    <TextBox
-                      className="dx-field-value"
-                      placeholder="Xpert Module Number"
-                      value={xpert_module_number}
-                      disabled={error || saving}
-                      onValueChange={(text) => setXpertModuleNumber(text)}
-                    >
-                      <Validator>
-                        <RequiredRule message="Xpert Module Number is required" />
-                      </Validator>
-                    </TextBox>
-                  </div>
                 </div>
+
                 <div className="dx-fieldset">
-                  <div className="dx-fieldset-header">Description</div>
+                  <div className="dx-fieldset-header">
+                    Cycle Threshold (Ct) Values
+                  </div>
+                  {CT_VALUES.map((ct) => (
+                    <div className="dx-field" key={ct.field}>
+                      <div className="dx-field-label">{ct.label}</div>
+                      <NumberBox
+                        className="dx-field-value"
+                        placeholder={ct.label}
+                        min={0}
+                        max={100}
+                        value={cts[ct.field]}
+                        disabled={error || saving || !interpretableYes}
+                        onValueChange={(value) =>
+                          setCts({ ...cts, [ct.field]: value })
+                        }
+                      >
+                        <Validator>
+                          {interpretableYes && (
+                            <RequiredRule message={`${ct.label} is required`} />
+                          )}
+                        </Validator>
+                      </NumberBox>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="dx-fieldset">
+                  <div className="dx-fieldset-header">Comments</div>
                   <div className="dx-field">
                     <HtmlEditor
                       height="225px"
@@ -735,6 +634,7 @@ const TBXpertUltraResultEdit = () => {
                     </HtmlEditor>
                   </div>
                 </div>
+
                 <div className="dx-field">
                   <div className="dx-field-label">
                     <ValidationSummary id="summaryMain" />
@@ -781,4 +681,4 @@ const TBXpertUltraResultEdit = () => {
   );
 };
 
-export default TBXpertUltraResultEdit;
+export default AdminTBXpertXDRResultEdit;

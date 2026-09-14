@@ -62,6 +62,18 @@ export { default as AdminMethodSampleViewPage } from './admin/methodsample/metho
 export { default as AdminTBXpertUltraResultListPage } from './admin/tbxpertultraresult/tbxpertultraresult_list'
 export { default as AdminTBXpertUltraResultEditPage } from './admin/tbxpertultraresult/tbxpertultraresult_edit'
 export { default as AdminTBXpertUltraResultViewPage } from './admin/tbxpertultraresult/tbxpertultraresult_view'
+{/* TBXpertXDRResult */}
+export { default as AdminTBXpertXDRResultListPage } from './admin/tbxpertxdrresult/tbxpertxdrresult_list'
+export { default as AdminTBXpertXDRResultEditPage } from './admin/tbxpertxdrresult/tbxpertxdrresult_edit'
+export { default as AdminTBXpertXDRResultViewPage } from './admin/tbxpertxdrresult/tbxpertxdrresult_view'
+{/* HIVVLResult */}
+export { default as AdminHIVVLResultListPage } from './admin/hivvlresult/hivvlresult_list'
+export { default as AdminHIVVLResultEditPage } from './admin/hivvlresult/hivvlresult_edit'
+export { default as AdminHIVVLResultViewPage } from './admin/hivvlresult/hivvlresult_view'
+{/* HIVEIDResult */}
+export { default as AdminHIVEIDResultListPage } from './admin/hiveidresult/hiveidresult_list'
+export { default as AdminHIVEIDResultEditPage } from './admin/hiveidresult/hiveidresult_edit'
+export { default as AdminHIVEIDResultViewPage } from './admin/hiveidresult/hiveidresult_view'
 {/* Enrollment */}
 export { default as AdminEnrollmentListPage } from './admin/enrollment/enrollment_list'
 export { default as AdminEnrollmentEditPage } from './admin/enrollment/enrollment_edit'
@@ -74,10 +86,29 @@ export { default as AdminApplicationsViewPage } from './admin/applications/appli
 export { default as AdminRoleListPage } from './admin/role/role_list'
 export { default as AdminRoleEditPage } from './admin/role/role_edit'
 export { default as AdminRoleViewPage } from './admin/role/role_view'
+{/* Evaluation */}
+export { default as AdminEvaluationViewPage } from './admin/evaluation/evaluation_view'
+{/* Reports */}
+export { default as PTReportViewPage } from './report/ptreport_view'
 {/* Dashboards */}
 //user
 {/* Enrollment */}
 export { default as FacilityEnrollmentListPage } from './facility/enrollment/enrollment_list'
+{/* TBXpertXDRResult */}
+export { default as FacilityTBXpertXDRResultListPage } from './facility/tbxpertxdrresult/tbxpertxdrresult_list'
+export { default as FacilityTBXpertXDRResultEditPage } from './facility/tbxpertxdrresult/tbxpertxdrresult_edit'
+export { default as FacilityTBXpertXDRResultViewPage } from './facility/tbxpertxdrresult/tbxpertxdrresult_view'
+{/* HIVVLResult */}
+export { default as FacilityHIVVLResultListPage } from './facility/hivvlresult/hivvlresult_list'
+export { default as FacilityHIVVLResultEditPage } from './facility/hivvlresult/hivvlresult_edit'
+export { default as FacilityHIVVLResultViewPage } from './facility/hivvlresult/hivvlresult_view'
+{/* HIVEIDResult */}
+export { default as FacilityHIVEIDResultListPage } from './facility/hiveidresult/hiveidresult_list'
+export { default as FacilityHIVEIDResultEditPage } from './facility/hiveidresult/hiveidresult_edit'
+export { default as FacilityHIVEIDResultViewPage } from './facility/hiveidresult/hiveidresult_view'
+{/* Performance */}
+export { default as FacilityPerformanceListPage } from './facility/performance/performance_list'
+export { default as FacilityPerformanceViewPage } from './facility/performance/performance_view'
 {/* TBXpertUltraResult */}
 export { default as FacilityTBXpertUltraResultListPage } from './facility/tbxpertultraresult/tbxpertultraresult_list'
 export { default as FacilityTBXpertUltraResultEditPage } from './facility/tbxpertultraresult/tbxpertultraresult_edit'

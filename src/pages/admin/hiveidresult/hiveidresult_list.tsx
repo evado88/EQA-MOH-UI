@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Titlebar } from "../../../components/titlebar";
 import { Card } from "../../../components/card";
 import { Row } from "../../../components/row";
@@ -20,7 +20,7 @@ import PageConfig from "../../../classes/page-config";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
 
-const AdminTBXpertUltraResultList = () => {
+const AdminHIVEIDResultList = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [data, setData] = useState([]);
@@ -28,17 +28,13 @@ const AdminTBXpertUltraResultList = () => {
   const [loading, setLoading] = useState(true);
   const hasRun = useRef(false);
 
-  //the lab this user reports for, carried on the sign in token
-  const labId = Assist.getLaboratoryId(user);
-
   const pageConfig = new PageConfig(
-    "My TB Xpert Ultra Results",
-    //only ever this lab's own result sheets, never the whole scheme's
-    `tb-xpert-ultra-results/list/${labId}`,
+    "HIV-1 EID Result List",
+    "hiv-eid-results/list",
     "",
-    "TB Xpert Ultra Result",
+    "HIV-1 EID Result",
     "",
-    Assist.LABORATORY_ROLES,
+    Assist.ADMIN_ROLES,
   );
 
   useEffect(() => {
@@ -52,43 +48,20 @@ const AdminTBXpertUltraResultList = () => {
       return;
     }
 
-    if (!labId) {
-      setLoading(false);
-      setLoadingText("Your account is not linked to a laboratory");
-      Assist.showMessage(
-        "Your account is not linked to a laboratory. Please contact the scheme administrator.",
-        "error",
-      );
-      return;
-    }
-
     setLoading(true);
 
     Assist.loadData(pageConfig.Title, pageConfig.Url)
       .then((res: any) => {
         setData(res);
         setLoading(false);
-
-        if (res.length === 0) {
-          setLoadingText("No Data");
-        } else {
-          setLoadingText("");
-        }
+        setLoadingText(res.length === 0 ? "No Data" : "");
       })
-      .catch((ex) => {
-        Assist.showMessage(ex.Message, "error");
+      .catch((message) => {
+        setLoading(false);
+        Assist.showMessage(message, "error");
         setLoadingText("Could not show information");
       });
   }, []);
-
-  const addButtonOptions = useMemo(
-    () => ({
-      icon: "add",
-      text: "New TB Xpert Ultra Result",
-      onClick: () => navigate("/admin/tb-xpert-ultra-results/add"),
-    }),
-    [],
-  );
 
   return (
     <div className="page-content" style={{ minHeight: "862px" }}>
@@ -98,9 +71,7 @@ const AdminTBXpertUltraResultList = () => {
         icon={"cubes"}
         url="/"
       ></Titlebar>
-      {/* end widget */}
 
-      {/* chart start */}
       <Row>
         <Col sz={12} sm={12} lg={12}>
           <Card showHeader={false}>
@@ -136,24 +107,16 @@ const AdminTBXpertUltraResultList = () => {
                 hidingPriority={23}
                 sortOrder="asc"
                 cellRender={(e) => {
-                  if (e.data.status.status_name == "Draft") {
-                    return (
-                    <Link to={`/facility/tb-xpert-ultra-results/edit/${e.data.id}`}>
-                      {e.text}
-                    </Link>
-                  );
-                  } else {
-                    return (
-                    <Link to={`/facility/tb-xpert-ultra-results/view/${e.data.id}`}>
-                      {e.text}
-                    </Link>
-                  );
-                  }
+                  const target =
+                    e.data.status.status_name == "Draft"
+                      ? `/admin/hiv-eid-results/edit/${e.data.id}`
+                      : `/admin/hiv-eid-results/view/${e.data.id}`;
+                  return <Link to={target}>{e.text}</Link>;
                 }}
               ></Column>
               <Column
-                dataField="scheme.name"
-                caption="Scheme"
+                dataField="ptcycle.name"
+                caption="Cycle"
                 hidingPriority={22}
               ></Column>
               <Column
@@ -162,118 +125,105 @@ const AdminTBXpertUltraResultList = () => {
                 hidingPriority={21}
               ></Column>
               <Column
-                dataField="service.name"
-                caption="Service"
+                dataField="methodsample.name"
+                caption="Sample or Control ID"
                 hidingPriority={20}
-              ></Column>
-              <Column
-                dataField="enrollment.name"
-                caption="Enrollment"
-                hidingPriority={19}
-              ></Column>
-              <Column
-                dataField="ptcycle.name"
-                caption="Cycle"
-                hidingPriority={18}
               ></Column>
               <Column
                 dataField="method.name"
                 caption="Method"
+                hidingPriority={19}
+              ></Column>
+              <Column
+                dataField="result_reported"
+                caption="Reported"
+                hidingPriority={18}
+              ></Column>
+              <Column
+                dataField="hiv_result"
+                caption="Your Result"
                 hidingPriority={17}
               ></Column>
               <Column
-                dataField="methodsample.name"
-                caption="Method Sample"
+                dataField="not_tested_reason"
+                caption="Reason Not Tested"
                 hidingPriority={16}
               ></Column>
               <Column
-                dataField="date_tested"
-                caption="Date Tested"
-                dataType="date"
-                format="dd MMM yyyy"
+                dataField="hiv_ct_od_value"
+                caption="HIV CT/OD"
+                dataType="number"
+                format="#0.00"
                 hidingPriority={15}
               ></Column>
               <Column
-                dataField="result_interpretable"
-                caption="Result Interpretable"
-                hidingPriority={15}
-              ></Column>
-              <Column
-                dataField="tb_detection_result"
-                caption="TB Detection Result"
+                dataField="ic_qs_value"
+                caption="IC/QS"
+                dataType="number"
+                format="#0.00"
                 hidingPriority={14}
               ></Column>
               <Column
-                dataField="rif_result"
-                caption="Rif Result"
+                dataField="date_panel_received"
+                caption="Panel Received"
+                dataType="date"
+                format="dd MMM yyyy"
                 hidingPriority={13}
+                visible={false}
               ></Column>
               <Column
-                dataField="uninterpretable_result"
-                caption="Uninterpretable Result"
+                dataField="date_tested"
+                caption="Panel Tested"
+                dataType="date"
+                format="dd MMM yyyy"
                 hidingPriority={12}
+                visible={false}
               ></Column>
               <Column
-                dataField="error_code"
-                caption="Error Code"
-                hidingPriority={12}
-              ></Column>
-              <Column
-                dataField="ultra_spc"
-                caption="Ultra SPC"
+                dataField="detection_assay"
+                caption="Detection Assay"
                 hidingPriority={11}
+                visible={false}
               ></Column>
               <Column
-                dataField="is1081_is6110"
-                caption="IS1081-IS6110"
+                dataField="extraction_assay"
+                caption="Extraction Assay"
                 hidingPriority={10}
+                visible={false}
               ></Column>
               <Column
-                dataField="rpob1"
-                caption="rpoB1"
+                dataField="assay_serial_number"
+                caption="Assay Serial No."
                 hidingPriority={9}
+                visible={false}
               ></Column>
               <Column
-                dataField="rpob2"
-                caption="rpoB2"
+                dataField="tested_by"
+                caption="Tested By"
                 hidingPriority={8}
+                visible={false}
               ></Column>
               <Column
-                dataField="rpob3"
-                caption="rpoB3"
+                dataField="supervisor_name"
+                caption="Supervisor"
                 hidingPriority={7}
-              ></Column>
-              <Column
-                dataField="rpob4"
-                caption="rpoB4"
-                hidingPriority={6}
-              ></Column>
-              <Column
-                dataField="xpert_module_number"
-                caption="Xpert Module Number"
-                hidingPriority={5}
+                visible={false}
               ></Column>
               <Column
                 dataField="stage.stage_name"
                 caption="Stage"
-                hidingPriority={4}
+                hidingPriority={3}
               ></Column>
               <Column
                 dataField="status.status_name"
                 caption="Status"
-                hidingPriority={3}
-              ></Column>
-              <Column
-                dataField="user.email"
-                caption="User"
-                minWidth={120}
                 hidingPriority={2}
               ></Column>
               <Column
                 dataField="created_at"
                 caption="Date"
                 dataType="date"
-                format="dd MMM yyy HH:MM"
+                format="dd MMM yyyy"
                 hidingPriority={1}
               ></Column>
             </DataGrid>
@@ -284,4 +234,4 @@ const AdminTBXpertUltraResultList = () => {
   );
 };
 
-export default AdminTBXpertUltraResultList;
+export default AdminHIVEIDResultList;
