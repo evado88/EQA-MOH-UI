@@ -429,6 +429,111 @@ class Assist {
   }
 
   /**
+   * Downloads a file the API serves as-is, and saves it under the given name.
+   *
+   * Unlike downloadExcel this sends nothing - it is for endpoints that already
+   * produce the file, such as the CSV import templates.
+   * @param title
+   * @param url path on the API
+   * @param filename what to save it as
+   */
+  static async downloadFile(title: string, url: string, filename: string) {
+    Assist.log(
+      `Starting to download ${title} from server using url ${AppInfo.apiUrl}${url}`,
+      "log",
+    );
+
+    return new Promise(function (myResolve, myReject) {
+      axios
+        .get(`${AppInfo.apiUrl}${url}`, { responseType: "blob" })
+        .then((response) => {
+          if (response.status !== 200) {
+            myReject(
+              `Unable to download ${title}. Error code ${response.status}`,
+            );
+            return;
+          }
+
+          const href = URL.createObjectURL(response.data);
+
+          const link = document.createElement("a");
+          link.href = href;
+          link.setAttribute("download", filename);
+          document.body.appendChild(link);
+          link.click();
+
+          document.body.removeChild(link);
+          URL.revokeObjectURL(href);
+
+          myResolve(filename);
+        })
+        .catch((err) => {
+          Assist.log(`An error occured when downloading ${title}`, "error");
+          myReject(`Unable to download ${title}. Please try again`);
+        });
+    });
+  }
+
+  /**
+   * Uploads a file to the API as multipart form data.
+   *
+   * The API reads the file from a field named `file`, so that is what is sent.
+   * Any query string belongs on the url, the way the import endpoints take
+   * their `imported_by` and `dry_run`.
+   * @param title
+   * @param url path on the API, query string included
+   * @param file the file the user chose
+   * @returns the API's response body
+   */
+  static async uploadFile(title: string, url: string, file: File) {
+    Assist.log(
+      `Starting to upload ${file.name} for ${title} using url ${AppInfo.apiUrl}${url}`,
+      "log",
+    );
+
+    const form = new FormData();
+    form.append("file", file);
+
+    return new Promise(function (myResolve, myReject) {
+      axios({
+        method: "post",
+        url: `${AppInfo.apiUrl}${url}`,
+        data: form,
+        headers: { "Content-Type": "multipart/form-data" },
+      })
+        .then((response) => {
+          Assist.log(
+            `Response completed for uploading ${title} with status ${response.status}`,
+          );
+
+          if (response.status !== 200) {
+            myReject(`Unable to upload ${title}. Error code ${response.status}`);
+          } else {
+            myResolve(response.data);
+          }
+        })
+        .catch((err) => {
+          Assist.log(`An error occured when uploading ${title}`, "error");
+
+          let message = `Unable to upload ${title}`;
+
+          if (err.response != null && err.response.data != null) {
+            //the API explains a rejected file in its detail
+            if (Array.isArray(err.response.data.detail)) {
+              message += `: ${err.response.data.detail[0].msg}`;
+            } else if (err.response.data.detail) {
+              message += `: ${err.response.data.detail}`;
+            }
+          } else {
+            message += ": Please try again";
+          }
+
+          myReject(message);
+        });
+    });
+  }
+
+  /**
    * Fetches a PDF from the reporting service and returns a URL the viewer can
    * display, along with the filename the service suggested.
    * @param title

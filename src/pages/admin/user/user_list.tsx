@@ -13,11 +13,12 @@ import DataGrid, {
   Editing,
   Toolbar,
   Item,
+  Button as GridButton,
 } from "devextreme-react/data-grid";
 
 import Assist from "../../../classes/assist";
 import PageConfig from "../../../classes/page-config";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
 
 const AdminUserList = () => {
@@ -71,6 +72,32 @@ const AdminUserList = () => {
     [],
   );
 
+  //a laboratory role reads differently from a provider one, so it is coloured
+  const roleCell = (e: any) => {
+    const name = e.value;
+    if (!name) return <span style={{ color: "#999" }}>Not set</span>;
+
+    const isLab = Assist.LABORATORY_ROLES.includes(e.data.role_id);
+    return <span style={{ color: isLab ? "#1565c0" : "#2e7d32" }}>{name}</span>;
+  };
+
+  //provider staff belong to no laboratory, which is a fact rather than a gap
+  const facilityCell = (e: any) => {
+    const laboratory = e.data.laboratory;
+    if (!laboratory) {
+      return <span style={{ color: "#999" }}>Provider</span>;
+    }
+
+    return (
+      <span>
+        {laboratory.name}
+        {laboratory.code ? (
+          <small style={{ color: "#777" }}> ({laboratory.code})</small>
+        ) : null}
+      </span>
+    );
+  };
+
   return (
     <div className="page-content" style={{ minHeight: "862px" }}>
       <Titlebar
@@ -97,10 +124,12 @@ const AdminUserList = () => {
               columnHidingEnabled={true}
             >
               <Paging defaultPageSize={10} />
+              {/* there is no delete endpoint for an account, and the row
+                  button only ever removed it from this page */}
               <Editing
                 mode="row"
                 allowUpdating={false}
-                allowDeleting={true}
+                allowDeleting={false}
                 allowAdding={false}
               />
               <Pager showPageSizeSelector={true} showInfo={true} />
@@ -117,37 +146,50 @@ const AdminUserList = () => {
                 />
                 <Item name="columnChooserButton" />
               </Toolbar>
-              <Column dataField="id" caption="ID" hidingPriority={6}></Column>
+              <Column dataField="id" caption="ID" hidingPriority={4}></Column>
               <Column
                 dataField="fname"
                 caption="First Name"
-                hidingPriority={5}
-                cellRender={(e) => {
-                  const getLink = () => {
-         
-                      return `/admin/users/view/${e.data.id}`;
-                    
-                  };
-
-                  return <a href={getLink()}>{e.text}</a>;
-                }}
+                hidingPriority={10}
+                cellRender={(e) => (
+                  <Link to={`/admin/users/view/${e.data.id}`}>{e.text}</Link>
+                )}
               ></Column>
               <Column
                 dataField="lname"
                 caption="Last Name"
-                hidingPriority={4}
+                hidingPriority={9}
+              ></Column>
+              <Column
+                dataField="role.name"
+                caption="Role"
+                hidingPriority={8}
+                cellRender={roleCell}
+              ></Column>
+              <Column
+                dataField="laboratory.name"
+                caption="Facility"
+                hidingPriority={7}
+                cellRender={facilityCell}
+              ></Column>
+              <Column
+                dataField="laboratory.code"
+                caption="Facility Code"
+                width={120}
+                hidingPriority={3}
+                visible={false}
               ></Column>
               <Column
                 dataField="mobile"
                 caption="Mobile"
-                hidingPriority={4}
+                hidingPriority={5}
               ></Column>
               <Column
                 dataField="email"
                 caption="Email"
-                hidingPriority={4}
+                hidingPriority={6}
               ></Column>
-          
+
               <Column
                 dataField="created_by"
                 caption="User"
@@ -162,6 +204,22 @@ const AdminUserList = () => {
                 format="dd MMM yyy HH:MM"
                 hidingPriority={1}
               ></Column>
+              <Column type="buttons" caption="" width={110}>
+                <GridButton
+                  text="View"
+                  hint="See the account"
+                  onClick={(e: any) =>
+                    navigate(`/admin/users/view/${e.row.data.id}`)
+                  }
+                />
+                <GridButton
+                  text="Edit"
+                  hint="Change the account"
+                  onClick={(e: any) =>
+                    navigate(`/admin/users/edit/${e.row.data.id}`)
+                  }
+                />
+              </Column>
             </DataGrid>
           </Card>
         </Col>

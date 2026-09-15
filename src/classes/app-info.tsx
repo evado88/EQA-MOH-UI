@@ -1,6 +1,6 @@
 const AppInfo = {
-  appName: "EQA",
-  appCode: "EQA",
+  appName: "EIMS",
+  appCode: "EIMS",
   apiUrl: "http://127.0.0.1:8800/",
   // The PT reports are rendered by XtraReports from the ASP.NET reporting
   // service. Until that is deployed this points at the placeholder renderer

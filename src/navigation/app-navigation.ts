@@ -54,6 +54,14 @@ export const navigation: MenuItem[] = [
         roles: ADMIN,
         items: [],
       }, 
+      {
+        key: "data-migration",
+        text: "Data Migration",
+        icon: "",
+        path: "/admin/imports/data-migration",
+        roles: ADMIN,
+        items: [],
+      },
     ],
   },
   {

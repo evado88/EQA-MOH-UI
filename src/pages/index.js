@@ -15,6 +15,8 @@ export { default as AdminPTCycleEditPage } from './admin/ptcycle/ptcycle_edit'
 export { default as AdminPTCycleViewPage } from './admin/ptcycle/ptcycle_view'
 {/* User */}
 export { default as AdminUserListPage } from './admin/user/user_list'
+export { default as AdminUserEditPage } from './admin/user/user_edit'
+export { default as AdminUserViewPage } from './admin/user/user_view'
 {/* Stage */}
 export { default as AdminStageListPage } from './admin/stage/stage_list'
 {/* Status */}
@@ -90,6 +92,8 @@ export { default as AdminRoleViewPage } from './admin/role/role_view'
 export { default as AdminEvaluationViewPage } from './admin/evaluation/evaluation_view'
 {/* Reports */}
 export { default as PTReportViewPage } from './report/ptreport_view'
+{/* Data Migration */}
+export { default as AdminImportDataPage } from './admin/imports/import_data'
 {/* Dashboards */}
 //user
 {/* Enrollment */}

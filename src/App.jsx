@@ -21,6 +21,8 @@ import {
   AdminPTCycleViewPage,
   // User
   AdminUserListPage,
+  AdminUserEditPage,
+  AdminUserViewPage,
   // Stage
   AdminStageListPage,
   // Status
@@ -82,6 +84,8 @@ import {
   // Evaluation and reports
   AdminEvaluationViewPage,
   PTReportViewPage,
+  // Data migration
+  AdminImportDataPage,
   // Enrollment
   AdminEnrollmentListPage,
   AdminEnrollmentEditPage,
@@ -138,6 +142,9 @@ function App() {
           <Route path="/admin/pt-cycles/view/:eId" element={<AdminPTCycleViewPage/>} />
           {/* User */}
           <Route path="/admin/user/list" element={<AdminUserListPage/>} />
+          <Route path="/admin/users/add" element={<AdminUserEditPage/>} />
+          <Route path="/admin/users/edit/:eId" element={<AdminUserEditPage/>} />
+          <Route path="/admin/users/view/:eId" element={<AdminUserViewPage/>} />
           {/* Stage */}
           <Route path="/admin/stages/list" element={<AdminStageListPage/>} />
           {/* Status */}
@@ -214,6 +221,8 @@ function App() {
           {/* PT Performance Report */}
           <Route path="/admin/reports/pt-performance" element={<PTReportViewPage/>} />
           <Route path="/admin/reports/pt-performance/:eId" element={<PTReportViewPage/>} />
+          {/* Data Migration */}
+          <Route path="/admin/imports/data-migration" element={<AdminImportDataPage/>} />
           {/* Enrollment */}
           <Route path="/admin/enrollments/list" element={<AdminEnrollmentListPage/>} />
           <Route path="/admin/enrollments/edit/:eId" element={<AdminEnrollmentEditPage/>} />
