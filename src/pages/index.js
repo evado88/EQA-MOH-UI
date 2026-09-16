@@ -46,6 +46,7 @@ export { default as AdminLabTypeEditPage } from './admin/labtype/labtype_edit'
 export { default as AdminLabTypeViewPage } from './admin/labtype/labtype_view'
 {/* Laboratory */}
 export { default as AdminLaboratoryListPage } from './admin/laboratory/laboratory_list'
+export { default as AdminLaboratorySchemeListPage } from './admin/laboratory/laboratory_scheme_list'
 export { default as AdminLaboratoryEditPage } from './admin/laboratory/laboratory_edit'
 export { default as AdminLaboratoryViewPage } from './admin/laboratory/laboratory_view'
 {/* Service */}

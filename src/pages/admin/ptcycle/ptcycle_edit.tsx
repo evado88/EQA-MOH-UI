@@ -128,6 +128,19 @@ const PTCycleEdit = () => {
     setReportsAvailabilityDate(data.reports_availability_date);
   };
 
+  /** What the cycle's status is, or will be when it is opened */
+  const currentStatusName = () => {
+    if (pageConfig.Id == 0) {
+      return Assist.PT_CYCLE_STATUS_NAMES[Assist.PT_CYCLE_UPCOMING];
+    }
+
+    return (
+      pt_cycle_status_data.find((s: any) => s.id === pt_cycle_status)?.name ??
+      Assist.PT_CYCLE_STATUS_NAMES[pt_cycle_status as any] ??
+      "-"
+    );
+  };
+
   const onFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     let result = confirm(
@@ -157,7 +170,8 @@ const PTCycleEdit = () => {
       code: code,
       scheme_id: scheme,
       effective_date: effective_date,
-      pt_cyle_status_id: pt_cycle_status,
+      //the status is deliberately not sent. A new cycle starts Upcoming, and
+      //an existing one only moves on from the PT Cycle page, a step at a time
       closing_date: closing_date,
       shipping_date: shipping_date,
       reports_availability_date: reports_availability_date,
@@ -313,25 +327,24 @@ const PTCycleEdit = () => {
                 </div>
                 <div className="dx-fieldset">
                   <div className="dx-fieldset-header">Timeline</div>
+                  {/* the status is not a choice. A new cycle starts Upcoming
+                      and is moved on a step at a time from the PT Cycle page,
+                      because each step does something - enrolment opens,
+                      panels ship, results are scored. */}
                   <div className="dx-field">
                     <div className="dx-field-label">PT Cycle Status</div>
-                    <SelectBox
-                      className="dx-field-value"
-                      placeholder="PT Cycle Status"
-                      displayFormat={"dd MMMM yyyy"}
-                      dateSerializationFormat="yyyy-MM-dd"
-                      dataSource={pt_cycle_status_data}
-                      displayExpr={'name'}
-                      valueExpr={'id'}
-                      deferRendering={false}
-                      value={pt_cycle_status}
-                      disabled={error || saving}
-                      onValueChange={(text) => setPTCycleStatus(text)}
-                    >
-                      <Validator>
-                        <RequiredRule message="PT Cycle Status is required" />
-                      </Validator>
-                    </SelectBox>
+                    <div className="dx-field-value-static">
+                      <strong>{currentStatusName()}</strong>
+                    </div>
+                  </div>
+                  <div className="dx-field">
+                    <div className="dx-field-value-static">
+                      <small>
+                        {pageConfig.Id == 0
+                          ? "A new PT Cycle opens as Upcoming. Enrolment opens, panels ship and results are scored as you move it on from the PT Cycle page."
+                          : "Move the cycle on from the PT Cycle page, which applies each step in turn."}
+                      </small>
+                    </div>
                   </div>
                   <div className="dx-field">
                     <div className="dx-field-label">Shipping Date</div>

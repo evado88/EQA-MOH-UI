@@ -468,7 +468,7 @@ const UserEdit = () => {
                       className="dx-field-value"
                       placeholder={
                         provinceId ? "District" : "Choose a province first"
-                      }
+                      } 
                       dataSource={districtsForProvince}
                       displayExpr={"name"}
                       valueExpr={"id"}

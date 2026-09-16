@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Titlebar } from "../../../components/titlebar";
 import { Card } from "../../../components/card";
 import { Row } from "../../../components/row";
@@ -14,6 +14,7 @@ import DataGrid, {
   Toolbar,
   Item,
 } from "devextreme-react/data-grid";
+import SelectBox from "devextreme-react/select-box";
 
 import Assist from "../../../classes/assist";
 import PageConfig from "../../../classes/page-config";
@@ -26,6 +27,10 @@ const AdminTBXpertUltraResultList = () => {
   const [data, setData] = useState([]);
   const [loadingText, setLoadingText] = useState("Loading data...");
   const [loading, setLoading] = useState(true);
+  //the round being viewed. Nothing is listed until one is chosen -
+  //a result only means anything in the context of its round.
+  const [cycles, setCycles] = useState<Array<any>>([]);
+  const [cycleId, setCycleId] = useState<undefined | number>(undefined);
   const hasRun = useRef(false);
 
   const pageConfig = new PageConfig(
@@ -36,6 +41,12 @@ const AdminTBXpertUltraResultList = () => {
     "",
     [Assist.ROLE_ADMIN],
   );
+
+
+  //the rounds that have sheets on this form, and the results within one
+  const cyclesUrl = `tb-xpert-ultra-results/cycles`;
+  const resultsUrl = (id: number) =>
+    `tb-xpert-ultra-results/list?pt_cycle_id=${id}`;
 
   useEffect(() => {
     //check if initialized
@@ -48,33 +59,57 @@ const AdminTBXpertUltraResultList = () => {
       return;
     }
 
+    loadCycles();
+  }, []);
+
+  /** The rounds this listing can be opened on */
+  const loadCycles = () => {
     setLoading(true);
 
-    Assist.loadData(pageConfig.Title, pageConfig.Url)
+    Assist.loadData(`${pageConfig.Title} Rounds`, cyclesUrl)
+      .then((res: any) => {
+        setCycles(res);
+        setLoading(false);
+        setLoadingText(
+          res.length === 0
+            ? "No round has results on this form yet"
+            : "Choose a round to see its results",
+        );
+      })
+      .catch((message) => {
+        setLoading(false);
+        Assist.showMessage(message, "error");
+        setLoadingText("Could not show information");
+      });
+  };
+
+  /** A round was chosen, so fetch just that round */
+  const onCycleChange = (value: number) => {
+    setCycleId(value);
+    setData([]);
+
+    if (!value) {
+      setLoadingText("Choose a round to see its results");
+      return;
+    }
+
+    setLoading(true);
+
+    Assist.loadData(pageConfig.Title, resultsUrl(value))
       .then((res: any) => {
         setData(res);
         setLoading(false);
-
-        if (res.length === 0) {
-          setLoadingText("No Data");
-        } else {
-          setLoadingText("");
-        }
+        setLoadingText(res.length === 0 ? "This round has no results" : "");
       })
-      .catch((ex) => {
-        Assist.showMessage(ex.Message, "error");
+      .catch((message) => {
+        setLoading(false);
+        Assist.showMessage(message, "error");
         setLoadingText("Could not show information");
       });
-  }, []);
+  };
 
-  const addButtonOptions = useMemo(
-    () => ({
-      icon: "add",
-      text: "New TB Xpert Ultra Result",
-      onClick: () => navigate("/admin/tb-xpert-ultra-results/add"),
-    }),
-    [],
-  );
+  const chosenCycle = () => cycles.find((c: any) => c.pt_cycle_id === cycleId);
+
 
   return (
     <div className="page-content" style={{ minHeight: "862px" }}>
@@ -87,6 +122,41 @@ const AdminTBXpertUltraResultList = () => {
       {/* end widget */}
 
       {/* chart start */}
+      <Row>
+        <Col sz={12} sm={12} lg={12}>
+          <Card showHeader={false}>
+            <div className="dx-field">
+              <div className="dx-field-label">Round</div>
+              <SelectBox
+                className="dx-field-value"
+                placeholder="Choose a round..."
+                dataSource={cycles}
+                displayExpr={"label"}
+                valueExpr={"pt_cycle_id"}
+                searchEnabled={true}
+                showClearButton={true}
+                deferRendering={false}
+                value={cycleId}
+                onValueChange={(value) => onCycleChange(value)}
+              />
+            </div>
+            {chosenCycle() && (
+              <div className="dx-field">
+                <div className="dx-field-value-static">
+                  <small>
+                    {chosenCycle().cycle_status} &middot;{" "}
+                    {chosenCycle().result_count} result(s) &middot;{" "}
+                    {chosenCycle().draft_count} draft &middot;{" "}
+                    {chosenCycle().pending_count} awaiting review &middot;{" "}
+                    {chosenCycle().approved_count} approved
+                  </small>
+                </div>
+              </div>
+            )}
+          </Card>
+        </Col>
+      </Row>
+
       <Row>
         <Col sz={12} sm={12} lg={12}>
           <Card showHeader={false}>
@@ -113,12 +183,6 @@ const AdminTBXpertUltraResultList = () => {
               <LoadPanel enabled={loading} />
               <ColumnChooser enabled={true} mode="select"></ColumnChooser>
               <Toolbar>
-                <Item
-                  location="before"
-                  locateInMenu="auto"
-                  widget="dxButton"
-                  options={addButtonOptions}
-                />
                 <Item name="columnChooserButton" />
               </Toolbar>
               <Column dataField="id" caption="ID" hidingPriority={24}></Column>

@@ -51,6 +51,7 @@ import {
   AdminLabTypeViewPage,
   // Laboratory
   AdminLaboratoryListPage,
+  AdminLaboratorySchemeListPage,
   AdminLaboratoryEditPage,
   AdminLaboratoryViewPage,
   // Service
@@ -178,6 +179,7 @@ function App() {
           <Route path="/admin/lab-types/view/:eId" element={<AdminLabTypeViewPage/>} />
           {/* Laboratory */}
           <Route path="/admin/laboratorys/list" element={<AdminLaboratoryListPage/>} />
+          <Route path="/admin/laboratorys/scheme-list" element={<AdminLaboratorySchemeListPage/>} />
           <Route path="/admin/laboratorys/edit/:eId" element={<AdminLaboratoryEditPage/>} />
           <Route path="/admin/laboratorys/add" element={<AdminLaboratoryEditPage/>} />
           <Route path="/admin/laboratorys/view/:eId" element={<AdminLaboratoryViewPage/>} />
