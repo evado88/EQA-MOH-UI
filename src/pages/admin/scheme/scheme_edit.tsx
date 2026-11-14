@@ -45,6 +45,12 @@ const SchemeEdit = () => {
   //properties
   const [provider, setScheme] = useState<undefined | string>(undefined);
 
+  //registration payment configuration
+  const [feeUsd, setFeeUsd] = useState<undefined | number>(undefined);
+  const [feeZmw, setFeeZmw] = useState<undefined | number>(undefined);
+  const [bankDetails, setBankDetails] = useState<undefined | string>(undefined);
+  const [mobileMoney, setMobileMoney] = useState<undefined | string>(undefined);
+  const [paymentInstructions, setPaymentInstructions] = useState<undefined | string>(undefined);
 
   //set up data sources for relationship fields
   const [provider_data, setprovider_data]=useState<Array<any> | any>([]);
@@ -110,7 +116,13 @@ const SchemeEdit = () => {
     //properties
     //set up data sources for relationship fields
     setScheme(data.provider_id);
-    
+
+    //registration payment configuration
+    setFeeUsd(data.registration_fee_usd ?? undefined);
+    setFeeZmw(data.registration_fee_zmw ?? undefined);
+    setBankDetails(data.bank_account_details ?? undefined);
+    setMobileMoney(data.mobile_money_details ?? undefined);
+    setPaymentInstructions(data.payment_instructions ?? undefined);
   };
 
   const onFormSubmit = (e: React.FormEvent) => {
@@ -140,6 +152,12 @@ const SchemeEdit = () => {
       description: description,
       //properties
       provider_id: provider,
+      //registration payment configuration
+      registration_fee_usd: feeUsd ?? null,
+      registration_fee_zmw: feeZmw ?? null,
+      bank_account_details: bankDetails ?? null,
+      mobile_money_details: mobileMoney ?? null,
+      payment_instructions: paymentInstructions ?? null,
       // approval
       status_id: Assist.STATUS_SUBMITTED,
       stage_id: Assist.STAGE_SUBMITTED,
@@ -241,6 +259,71 @@ const SchemeEdit = () => {
                       </Validator>
                     </SelectBox>
                   </div> 
+                </div>
+                <div className="dx-fieldset">
+                  <div className="dx-fieldset-header">Registration Payment</div>
+                  <p style={{ color: "#6b7280", fontSize: 12, margin: "0 0 8px" }}>
+                    Used when an approver marks a registration as requiring
+                    payment. Local (Zambian) labs are charged in ZMW and may use
+                    mobile money; international labs are charged in USD.
+                  </p>
+                  <div className="dx-field">
+                    <div className="dx-field-label">Registration Fee (USD)</div>
+                    <NumberBox
+                      className="dx-field-value"
+                      placeholder="e.g. 50"
+                      format="$ #,##0.##"
+                      min={0}
+                      value={feeUsd}
+                      disabled={error || saving}
+                      onValueChange={(v) => setFeeUsd(v)}
+                    />
+                  </div>
+                  <div className="dx-field">
+                    <div className="dx-field-label">Registration Fee (ZMW)</div>
+                    <NumberBox
+                      className="dx-field-value"
+                      placeholder="e.g. 1000"
+                      format="#,##0.## 'ZMW'"
+                      min={0}
+                      value={feeZmw}
+                      disabled={error || saving}
+                      onValueChange={(v) => setFeeZmw(v)}
+                    />
+                  </div>
+                  <div className="dx-field">
+                    <div className="dx-field-label">Bank Account Details</div>
+                    <TextArea
+                      className="dx-field-value"
+                      placeholder="Bank name, account name, account number, branch, SWIFT"
+                      height={70}
+                      value={bankDetails}
+                      disabled={error || saving}
+                      onValueChange={(v) => setBankDetails(v)}
+                    />
+                  </div>
+                  <div className="dx-field">
+                    <div className="dx-field-label">Mobile Money (local only)</div>
+                    <TextArea
+                      className="dx-field-value"
+                      placeholder="Provider, number, registered name"
+                      height={70}
+                      value={mobileMoney}
+                      disabled={error || saving}
+                      onValueChange={(v) => setMobileMoney(v)}
+                    />
+                  </div>
+                  <div className="dx-field">
+                    <div className="dx-field-label">Payment Instructions</div>
+                    <TextArea
+                      className="dx-field-value"
+                      placeholder="Any instructions shown to the applicant"
+                      height={70}
+                      value={paymentInstructions}
+                      disabled={error || saving}
+                      onValueChange={(v) => setPaymentInstructions(v)}
+                    />
+                  </div>
                 </div>
                 <div className="dx-fieldset">
                   <div className="dx-fieldset-header">Description</div>

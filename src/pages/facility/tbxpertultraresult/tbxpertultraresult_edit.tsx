@@ -191,7 +191,7 @@ const TBXpertUltraResultEdit = () => {
   const onFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     let result = confirm(
-      "Are you sure you want to submit this TB Xpert Ultra Result? You will not be able to change it afterwards.",
+      "Are you sure you want to submit this TB Xpert Ultra Result? You can submit again as many times as you need until the result submission due date, after which submission closes.",
       "Confirm submission",
     );
     result.then((dialogResult) => {
@@ -269,7 +269,7 @@ const TBXpertUltraResultEdit = () => {
           }
 
           Assist.showMessage(
-            `You have successfully submitted the ${pageConfig.Title} for approval!`,
+            `You have successfully submitted the ${pageConfig.Title}!`,
             "success",
           );
           navigate(`/facility/tb-xpert-ultra-results/list`);
@@ -769,7 +769,7 @@ const TBXpertUltraResultEdit = () => {
                       className="button-indicator"
                       visible={saving}
                     />
-                    <span className="dx-button-text">Submit for Review</span>
+                    <span className="dx-button-text">Submit Results</span>
                   </Button>
                 </div>
               </div>

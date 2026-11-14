@@ -7,6 +7,8 @@ export { default as SetPasswordPage } from '../auth/set-password'
 //Scheme self-registration
 export { default as SchemeSelectPage } from './scheme/scheme_select'
 export { default as SchemeRegisterPage } from './scheme/scheme_register'
+export { default as MyRegistrationsPage } from './scheme/my_registrations'
+export { default as PaymentApprovalsPage } from './scheme/payment_approvals'
 
 //ADMIN
 {/* Provider */}

@@ -74,28 +74,31 @@ class Assist {
     Assist.ROLE_MINISTRY_OF_HEALTH,
   ];
 
-  // pt cycle statuses - mirror the /pt-cycle-statuses/initialize seed
+  // who may approve a registration once proof of payment is in: the scheme
+  // approvers plus the Finance role
+  static PAYMENT_APPROVER_ROLES = [
+    ...Assist.ADMIN_ROLES,
+    Assist.ROLE_FINANCE_OFFICER,
+  ];
+
+  // pt cycle statuses - derived from the round's dates + two manual gates
+  // (samples shipped, reports published); mirror helpers/assist.py (migration 019)
   static PT_CYCLE_UPCOMING = 1;
-  static PT_CYCLE_STARTED = 2;
-  static PT_CYCLE_SAMPLES_SHIPPED = 3;
-  static PT_CYCLE_REPORT_AVAILABLE = 4;
-  static PT_CYCLE_CLOSED = 5;
+  static PT_CYCLE_ENROLMENT_OPEN = 2;
+  static PT_CYCLE_ENROLMENT_CLOSED = 3;
+  static PT_CYCLE_SAMPLES_SHIPPED = 4;
+  static PT_CYCLE_TESTING = 5;
+  static PT_CYCLE_RESULTS_DUE = 6;
+  static PT_CYCLE_REPORT_AVAILABLE = 7;
 
   static PT_CYCLE_STATUS_NAMES: Record<number, string> = {
     1: "Upcoming",
-    2: "Started",
-    3: "Samples Shipped",
-    4: "Report Available",
-    5: "Closed",
-  };
-
-  // a cycle only ever moves forward, one step at a time
-  static PT_CYCLE_TRANSITIONS: Record<number, number[]> = {
-    1: [2],
-    2: [3],
-    3: [4],
-    4: [5],
-    5: [],
+    2: "Enrolment Open",
+    3: "Enrolment Closed",
+    4: "Samples Shipped",
+    5: "Testing In Progress",
+    6: "Results Due",
+    7: "Report Available",
   };
 
   /** Returns true when the signed in user belongs to a participating laboratory */

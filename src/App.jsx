@@ -15,6 +15,8 @@ import {
   // Scheme self-registration
   SchemeSelectPage,
   SchemeRegisterPage,
+  MyRegistrationsPage,
+  PaymentApprovalsPage,
   // Provider
   AdminProviderListPage,
   AdminProviderEditPage,
@@ -263,6 +265,9 @@ function App() {
          {/* facility Scheme self-registration */}
           <Route path="/facility/schemes" element={<SchemeSelectPage/>} />
           <Route path="/facility/schemes/register/:eId" element={<SchemeRegisterPage/>} />
+          <Route path="/facility/my-registrations" element={<MyRegistrationsPage/>} />
+          {/* payment approvals (scheme approvers + Finance) */}
+          <Route path="/admin/payment-approvals" element={<PaymentApprovalsPage/>} />
 
          {/* facility Enrollment */}
           <Route path="/facility/enrollments/list" element={<FacilityEnrollmentListPage/>} />

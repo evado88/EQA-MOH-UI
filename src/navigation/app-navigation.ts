@@ -18,6 +18,8 @@ export interface MenuItem {
 //  - LAB: a participating laboratory's own work
 const SYSTEM_ADMIN = Assist.SYSTEM_ADMIN_ROLES;
 const OPERATIONAL = Assist.ADMIN_ROLES;
+// scheme approvers plus the Finance role (for the payment approval step)
+const PAYMENT_APPROVERS = Assist.PAYMENT_APPROVER_ROLES;
 const LAB = Assist.LABORATORY_ROLES;
 const EVERYONE = [...Assist.PROVIDER_ROLES, ...LAB];
 
@@ -254,6 +256,14 @@ export const navigation: MenuItem[] = [
     ],
   },
   {
+    key: "9-payment-approvals",
+    text: "Payment Approvals",
+    icon: "fa fa-money",
+    path: "/admin/payment-approvals",
+    roles: PAYMENT_APPROVERS,
+    items: [],
+  },
+  {
     key: "11-results",
     text: "Results",
     icon: "fa fa-stethoscope",
@@ -315,6 +325,14 @@ export const navigation: MenuItem[] = [
     text: "Register for a Scheme",
     icon: "fa fa-th-large",
     path: "/facility/schemes",
+    roles: LAB,
+    items: [],
+  },
+  {
+    key: "19b-lab-my-registrations",
+    text: "My Registrations",
+    icon: "fa fa-file-text-o",
+    path: "/facility/my-registrations",
     roles: LAB,
     items: [],
   },

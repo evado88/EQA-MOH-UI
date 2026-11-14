@@ -271,59 +271,6 @@ const AdminHIVVLResultView = () => {
           </Card>
         </Col>
         <Col sz={12} sm={12} lg={5}>
-          {requiresApproval() && (
-            <Card title="Grading" showHeader={true}>
-              <div className="form">
-                <div className="dx-fieldset">
-                  <div className="dx-field">
-                    <div className="dx-field-label">Comments</div>
-                    <TextArea
-                      className="dx-field-value"
-                      placeholder="Comments"
-                      height={80}
-                      value={comments}
-                      disabled={saving}
-                      onValueChange={(value) => setComments(value)}
-                    ></TextArea>
-                  </div>
-                </div>
-                <div className="dx-field">
-                  <div className="dx-field-label"></div>
-                  <Button
-                    width="100%"
-                    type={saving ? "normal" : "success"}
-                    disabled={loading || saving}
-                    onClick={() =>
-                      review(Assist.REVIEW_ACTION_APPROVE, "approved")
-                    }
-                  >
-                    <LoadIndicator
-                      className="button-indicator"
-                      visible={saving}
-                    />
-                    <span className="dx-button-text">Approve Result</span>
-                  </Button>
-                </div>
-                <div className="dx-field">
-                  <div className="dx-field-label"></div>
-                  <Button
-                    width="100%"
-                    type={saving ? "normal" : "danger"}
-                    disabled={loading || saving}
-                    onClick={() =>
-                      review(Assist.REVIEW_ACTION_REJECT, "rejected")
-                    }
-                  >
-                    <LoadIndicator
-                      className="button-indicator"
-                      visible={saving}
-                    />
-                    <span className="dx-button-text">Reject Result</span>
-                  </Button>
-                </div>
-              </div>
-            </Card>
-          )}
         </Col>
       </Row>
     </div>

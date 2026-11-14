@@ -16,6 +16,7 @@ import AppInfo from "../../../classes/app-info";
 import DataGrid, { Column, Pager, Paging } from "devextreme-react/data-grid";
 import { confirm } from "devextreme/ui/dialog";
 import TextArea from "devextreme-react/text-area";
+import CheckBox from "devextreme-react/check-box";
 import ValidationSummary from "devextreme-react/validation-summary";
 
 const AdminLaboratory = () => {
@@ -39,6 +40,8 @@ const AdminLaboratory = () => {
 
   const [rejectionReason, setRejectionReason] = useState("");
   const [approvalComments, setApprovalComments] = useState("");
+  const [paymentRequired, setPaymentRequired] = useState(false);
+  const [proofUrl, setProofUrl] = useState<string | null>(null);
   const hasRun = useRef(false);
 
   const pageConfig = new PageConfig(
@@ -47,7 +50,8 @@ const AdminLaboratory = () => {
     "",
     "Laboratory",
     `laboratorys/review-update/${eId}`,
-    [Assist.ROLE_ADMIN],
+    // scheme approvers, plus Finance (who may approve once payment proof is in)
+    Assist.PAYMENT_APPROVER_ROLES,
   );
 
   pageConfig.Id = eId == undefined ? 0 : Number(eId);
@@ -92,6 +96,16 @@ const AdminLaboratory = () => {
 
     //a lab that registered itself has no owning user until it is approved
     setCreatedBy(res.laboratory.user?.email ?? res.laboratory.created_by);
+
+    //resolve the proof-of-payment file link, if one has been attached
+    const proofId = res.laboratory.payment_proof_attachment_id;
+    if (proofId) {
+      Assist.loadData("Proof of payment", `attachments/${proofId}`)
+        .then((att: any) => {
+          if (att?.path) setProofUrl(`${AppInfo.apiUrl}static/${att.path}`);
+        })
+        .catch(() => {});
+    }
   };
 
   const isReviewed = () => {
@@ -103,7 +117,10 @@ const AdminLaboratory = () => {
       if (
         stage == "Submitted" ||
         stage == "Primary Approval" ||
-        stage == "Secondary Approval"
+        stage == "First Approval" ||
+        stage == "Secondary Approval" ||
+        stage == "Second Approval" ||
+        stage == "Payment Review"
       ) {
         return true;
       } else {
@@ -113,6 +130,9 @@ const AdminLaboratory = () => {
       return false;
     }
   };
+
+  // the "require payment" option is only offered at the first review
+  const canRequirePayment = () => stage == "Submitted";
 
   const onFormApproveSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -166,6 +186,8 @@ const AdminLaboratory = () => {
       user_id: user.userid,
       review_action: action,
       comments: reviewComments,
+      // only honoured by the server when approving at the first (Submitted) stage
+      payment_required: action === Assist.REVIEW_ACTION_APPROVE && canRequirePayment() && paymentRequired,
     };
 
     setTimeout(() => {
@@ -472,6 +494,50 @@ const AdminLaboratory = () => {
           </Card>
         </Col>
         <Col sz={12} sm={12} lg={5}>
+          {laboratoryDetail != null && laboratoryDetail.payment_required && (
+            <Card title="Payment" showHeader={true}>
+              <div className="form">
+                <div className="dx-fieldset">
+                  <div className="dx-field">
+                    <div className="dx-field-label">Amount Due</div>
+                    <div className="dx-field-value-static">
+                      <strong>
+                        {laboratoryDetail.payment_amount != null
+                          ? `${laboratoryDetail.payment_currency} ${laboratoryDetail.payment_amount}`
+                          : `${laboratoryDetail.payment_currency ?? ""} (not set on scheme)`}
+                      </strong>
+                    </div>
+                  </div>
+                  <div className="dx-field">
+                    <div className="dx-field-label">Reference</div>
+                    <div className="dx-field-value-static">
+                      {laboratoryDetail.payment_reference || "—"}
+                    </div>
+                  </div>
+                  <div className="dx-field">
+                    <div className="dx-field-label">Submitted</div>
+                    <div className="dx-field-value-static">
+                      {laboratoryDetail.payment_submitted_at
+                        ? Assist.getDateText(laboratoryDetail.payment_submitted_at)
+                        : "Awaiting applicant"}
+                    </div>
+                  </div>
+                  <div className="dx-field">
+                    <div className="dx-field-label">Proof</div>
+                    <div className="dx-field-value-static">
+                      {proofUrl ? (
+                        <a href={proofUrl} target="_blank" rel="noreferrer">
+                          View proof of payment
+                        </a>
+                      ) : (
+                        "Not yet attached"
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Card>
+          )}
           {requiresApproval() && (
             <Card title="Rejection" showHeader={true}>
               <div className="form">
@@ -539,6 +605,27 @@ const AdminLaboratory = () => {
                         onValueChange={(value) => setApprovalComments(value)}
                       ></TextArea>
                     </div>
+                    {canRequirePayment() && (
+                      <div className="dx-field">
+                        <label
+                          style={{ display: "flex", alignItems: "center", gap: 10 }}
+                        >
+                          <CheckBox
+                            value={paymentRequired}
+                            disabled={error || saving}
+                            onValueChanged={(e: any) => setPaymentRequired(e.value)}
+                          />
+                          <span>
+                            Payment required before final approval
+                          </span>
+                        </label>
+                        <small style={{ color: "#6b7280" }}>
+                          If ticked, the applicant is asked to pay and attach proof;
+                          it then returns here (Finance may also approve). If not,
+                          approval completes now.
+                        </small>
+                      </div>
+                    )}
                   </div>
 
                   <div className="dx-field">

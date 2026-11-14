@@ -323,7 +323,7 @@ const BacteriologyResultEdit = () => {
   const onFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     confirm(
-      "Are you sure you want to submit this Bacteriology Worksheet? You will not be able to change it afterwards.",
+      "Are you sure you want to submit this Bacteriology Worksheet? You can submit again as many times as you need until the result submission due date, after which submission closes.",
       "Confirm submission",
     ).then((dialogResult) => {
       if (dialogResult) submitResult(Assist.STATUS_SUBMITTED);
@@ -414,7 +414,7 @@ const BacteriologyResultEdit = () => {
           }
 
           Assist.showMessage(
-            `You have successfully submitted the ${pageConfig.Title} for approval!`,
+            `You have successfully submitted the ${pageConfig.Title}!`,
             "success",
           );
           navigate(`/facility/bacteriology-results/list`);
@@ -920,7 +920,7 @@ const BacteriologyResultEdit = () => {
                       className="button-indicator"
                       visible={saving}
                     />
-                    <span className="dx-button-text">Submit for Review</span>
+                    <span className="dx-button-text">Submit Results</span>
                   </Button>
                 </div>
               </div>

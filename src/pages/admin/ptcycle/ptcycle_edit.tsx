@@ -1,104 +1,77 @@
-import React, { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Titlebar } from "../../../components/titlebar";
 import { Card } from "../../../components/card";
 import { Row } from "../../../components/row";
 import { Col } from "../../../components/column";
 import SelectBox from "devextreme-react/select-box";
 import { TextBox } from "devextreme-react/text-box";
-import {
-  Validator,
-  RequiredRule,
-  AsyncRule,
-  CompareRule,
-  CustomRule,
-} from "devextreme-react/validator";
 import TextArea from "devextreme-react/text-area";
-import { NumberBox } from "devextreme-react/number-box";
+import { Validator, RequiredRule } from "devextreme-react/validator";
 import Button from "devextreme-react/button";
+import FileUploader from "devextreme-react/file-uploader";
 import ValidationSummary from "devextreme-react/validation-summary";
 import { LoadPanel } from "devextreme-react/load-panel";
 import DateBox from "devextreme-react/date-box";
-import { useTheme } from "../../../context/ThemeContext";
 import { useAuth } from "../../../context/AuthContext";
 import PageConfig from "../../../classes/page-config";
 import Assist from "../../../classes/assist";
 import { LoadIndicator } from "devextreme-react/load-indicator";
 import { useNavigate, useParams } from "react-router-dom";
-import HtmlEditor, {
-  Toolbar,
-  Item,
-  MediaResizing,
-} from "devextreme-react/html-editor";
-import AppInfo from "../../../classes/app-info";
 import { confirm } from "devextreme/ui/dialog";
 
 const PTCycleEdit = () => {
-  //user
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { eId } = useParams(); // Destructure the parameter directly
+  const { eId } = useParams();
 
-  //name
-  const [name, setName] = useState<undefined | string>(undefined);
-  const [description, setDescription] = useState<undefined | string>(undefined);
+  const [code, setCode] = useState<string | undefined>(undefined);
+  const [schemeId, setSchemeId] = useState<number | undefined>(undefined);
+  const [openingDate, setOpeningDate] = useState<string | undefined>(undefined);
+  const [closingDate, setClosingDate] = useState<string | undefined>(undefined);
+  const [shippingDate, setShippingDate] = useState<string | undefined>(undefined);
+  const [testStartDate, setTestStartDate] = useState<string | undefined>(undefined);
+  const [testStopDate, setTestStopDate] = useState<string | undefined>(undefined);
+  const [resultDueDate, setResultDueDate] = useState<string | undefined>(undefined);
+  const [reportDate, setReportDate] = useState<string | undefined>(undefined);
+  const [notes, setNotes] = useState<string | undefined>(undefined);
+  const [reuseFromId, setReuseFromId] = useState<number | undefined>(undefined);
 
-  //properties
-  const [code, setCode] = useState<undefined | string>(undefined);
-  const [scheme, setLabType] = useState<undefined | string>(undefined);
-  const [effective_date, setEffectiveDate] = useState<undefined | string>(undefined);
-  const [pt_cycle_status, setPTCycleStatus] = useState<undefined | string>(undefined);
-  const [closing_date, setClosingDate] = useState<undefined | string>(undefined);
-  const [shipping_date, setShippingDate] = useState<undefined | string>(undefined);
-  const [reports_availability_date, setReportsAvailabilityDate] = useState<undefined | string>(undefined);
+  const [scheme_data, setSchemeData] = useState<Array<any>>([]);
+  const [cycle_data, setCycleData] = useState<Array<any>>([]); // candidates to reuse from
+  const [documents, setDocuments] = useState<Array<any>>([]);
+  const [newFiles, setNewFiles] = useState<File[]>([]);
 
-
-  //set up data sources for relationship fields
-  const [scheme_data, setscheme_data]=useState<Array<any> | any>([]);
-  const [pt_cycle_status_data, setpt_cycle_status_data]=useState<Array<any> | any>([]);
-
-  //service
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(false);
   const hasRun = useRef(false);
 
-  const pageConfig = new PageConfig(
-   `PT Cycle`, "", "", "PT Cycle", "", [Assist.ROLE_ADMIN,]
-  );
-
+  const pageConfig = new PageConfig(`PT Cycle`, "", "", "PT Cycle", "", Assist.ADMIN_ROLES);
   pageConfig.Id = eId == undefined ? 0 : Number(eId);
-
-  //set up data sources for relationship fields
+  const isNew = pageConfig.Id == 0;
 
   useEffect(() => {
-    //check if initialized
     if (hasRun.current) return;
     hasRun.current = true;
-
-    //check permissions and audit
     if (!Assist.checkPageAuditPermission(pageConfig, user)) {
       Assist.redirectUnauthorized(navigate);
       return;
     }
-    
-    //only load if updating item
     setLoading(true);
-
     setTimeout(() => {
-      Assist.loadData(
-        pageConfig.Title,
-        `pt-cycles/id/${pageConfig.Id}`,
-      )
-        .then((data: any) => {
+      Promise.all([
+        Assist.loadData(pageConfig.Title, `pt-cycles/id/${pageConfig.Id}`),
+        Assist.loadData("Rounds", `pt-cycles/list`),
+        pageConfig.Id != 0
+          ? Assist.loadData("Documents", `pt-cycles/documents/${pageConfig.Id}`)
+          : Promise.resolve([]),
+      ])
+        .then(([data, cycles, docs]: [any, any, any]) => {
           setLoading(false);
-          if(pageConfig.Id != 0){
-            // only update values if valid id
-            updateVaues(data.ptcycle);
-          }
-          //set up data sources for relationship fields
-          setscheme_data(data.schemeList);
-          setpt_cycle_status_data(data.ptcyclestatusList);
-          //set error
+          setSchemeData(data.schemeList);
+          setCycleData(cycles || []);
+          setDocuments(docs || []);
+          if (pageConfig.Id != 0) updateValues(data.ptcycle);
           setError(false);
         })
         .catch((message) => {
@@ -109,97 +82,67 @@ const PTCycleEdit = () => {
     }, Assist.DEV_DELAY);
   }, []);
 
-  const updateVaues = (data: any) => {
-
-    //name
-    setName(data.name);
-    setDescription(data.description);
-
-    //properties
-    //set up data sources for relationship fields
+  const updateValues = (data: any) => {
     setCode(data.code);
-    setLabType(data.scheme_id);
-    
-    setEffectiveDate(data.effective_date);
-    setPTCycleStatus(data.pt_cyle_status_id);
-    
+    setSchemeId(data.scheme_id);
+    setOpeningDate(data.effective_date);
     setClosingDate(data.closing_date);
     setShippingDate(data.shipping_date);
-    setReportsAvailabilityDate(data.reports_availability_date);
-  };
-
-  /** What the cycle's status is, or will be when it is opened */
-  const currentStatusName = () => {
-    if (pageConfig.Id == 0) {
-      return Assist.PT_CYCLE_STATUS_NAMES[Assist.PT_CYCLE_UPCOMING];
-    }
-
-    return (
-      pt_cycle_status_data.find((s: any) => s.id === pt_cycle_status)?.name ??
-      Assist.PT_CYCLE_STATUS_NAMES[pt_cycle_status as any] ??
-      "-"
-    );
+    setTestStartDate(data.test_event_start_date);
+    setTestStopDate(data.test_event_stop_date);
+    setResultDueDate(data.result_submission_due_date);
+    setReportDate(data.reports_availability_date);
+    setNotes(data.notes ?? data.description);
   };
 
   const onFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    let result = confirm(
-      "Are you sure you want to submit this PT Cycle?",
-      "Confirm submission",
-    );
-    result.then((dialogResult) => {
-      if (dialogResult) {
-        submitPTCycle();
+    confirm("Submit this PT Cycle?", "Confirm submission").then((ok) => ok && submit());
+  };
+
+  const uploadDocuments = async (cycleId: number) => {
+    for (const file of newFiles) {
+      try {
+        await Assist.uploadFile(
+          "Document",
+          `attachments/create/type/PTCycleDocument/parent/${cycleId}`,
+          file,
+        );
+      } catch (e) {
+        Assist.showMessage(`Could not upload ${file.name}`, "warning");
       }
-    });
+    }
+  };
 
-  }
-
-  const submitPTCycle = () => {
-
+  const submit = () => {
     setSaving(true);
-
-
-    const postData = {
-      //user
+    const postData: any = {
       user_id: user.userid,
-      //name
-      name: name,
-      description: description,
-      //properties
-      code: code,
-      scheme_id: scheme,
-      effective_date: effective_date,
-      //the status is deliberately not sent. A new cycle starts Upcoming, and
-      //an existing one only moves on from the PT Cycle page, a step at a time
-      closing_date: closing_date,
-      shipping_date: shipping_date,
-      reports_availability_date: reports_availability_date,
-      // approval
-      status_id: Assist.STATUS_SUBMITTED,
-      stage_id: Assist.STAGE_SUBMITTED,
-      approval_levels: 1,
+      code,
+      scheme_id: schemeId,
+      effective_date: openingDate,
+      closing_date: closingDate,
+      shipping_date: shippingDate,
+      test_event_start_date: testStartDate,
+      test_event_stop_date: testStopDate,
+      result_submission_due_date: resultDueDate,
+      reports_availability_date: reportDate,
+      notes,
     };
+    if (isNew && reuseFromId) postData.reuse_from_pt_cycle_id = reuseFromId;
 
-    const url =
-      pageConfig.Id == 0
-        ? `pt-cycles/create`
-        : `pt-cycles/update/${pageConfig.Id}`;
+    const url = isNew ? `pt-cycles/create` : `pt-cycles/update/${pageConfig.Id}`;
 
     setTimeout(() => {
       Assist.postPutData(pageConfig.Title, url, postData, pageConfig.Id)
-        .then((data: any) => {
+        .then(async (data: any) => {
+          if (newFiles.length) await uploadDocuments(data.id);
           setSaving(false);
-          updateVaues(data);
-            // navigate to list
-            Assist.showMessage(
-              `You have successfully submitted the ${pageConfig.Title} for approval!`,
-              "success",
-            );
-            navigate(`/admin/pt-cycles/list`);
-      
-            
-          
+          Assist.showMessage(
+            `You have successfully submitted the ${pageConfig.Title} for approval!`,
+            "success",
+          );
+          navigate(`/admin/pt-cycles/list`);
         })
         .catch((message) => {
           setSaving(false);
@@ -208,9 +151,33 @@ const PTCycleEdit = () => {
     }, Assist.DEV_DELAY);
   };
 
-  const toolbar: any = useMemo(() => {
-    return AppInfo.htmlToolbar;
-  }, []);
+  // rounds of the same scheme (excluding this one) that participants can be reused from
+  const reuseCandidates = cycle_data.filter(
+    (c: any) => c.scheme_id === schemeId && c.id !== pageConfig.Id,
+  );
+
+  const dateField = (
+    label: string,
+    value: string | undefined,
+    setter: (v: string) => void,
+  ) => (
+    <div className="dx-field">
+      <div className="dx-field-label">{label}</div>
+      <DateBox
+        className="dx-field-value"
+        placeholder={label}
+        displayFormat={"dd MMMM yyyy"}
+        dateSerializationFormat="yyyy-MM-dd"
+        value={value}
+        disabled={error || saving}
+        onValueChange={(v) => setter(v)}
+      >
+        <Validator>
+          <RequiredRule message={`${label} is required`} />
+        </Validator>
+      </DateBox>
+    </div>
+  );
 
   return (
     <div id="pageRoot" className="page-content">
@@ -225,67 +192,33 @@ const PTCycleEdit = () => {
       />
       <Titlebar
         title={`${pageConfig.verb()} ${pageConfig.Title}`}
-        section={"Configuration"}
-        icon={"gear"}
-        url="#"
+        section={"PT Calendar"}
+        icon={"event"}
+        url="/admin/pt-cycles/list"
       ></Titlebar>
-      {/* end widget */}
 
-      {/* chart start */}
       <Row>
         <Col sz={12} sm={12} lg={7}>
-          <Card title="Properties" showHeader={true}>
+          <Card title="Round" showHeader={true}>
             <form id="formMain" onSubmit={onFormSubmit}>
               <div className="form">
                 <div className="dx-fieldset">
-                  <div className="dx-fieldset-header">Name</div>
-                  <div className="dx-field">
-                    <div className="dx-field-label">Name</div>
-                    <TextBox
-                      className="dx-field-value"
-                      placeholder="Name"
-                      value={name}
-                      disabled={error || saving}
-                      onValueChange={(text) => setName(text)}
-                    >
-                      <Validator>
-                        <RequiredRule message="Name is required" />
-                      </Validator>
-                    </TextBox>
-                  </div>
-                </div>
-                <div className="dx-fieldset">
-                  <div className="dx-fieldset-header">Period</div>
-                  <div className="dx-field">
-                    <div className="dx-field-label">Code</div>
-                    <TextBox
-                      className="dx-field-value"
-                      placeholder="Code"
-                      displayFormat={"dd MMMM yyyy"}
-                      dateSerializationFormat="yyyy-MM-dd"
-                      value={code}
-                      disabled={error || saving}
-                      onValueChange={(text) => setCode(text)}
-                    >
-                      <Validator>
-                        <RequiredRule message="Code is required" />
-                      </Validator>
-                    </TextBox>
-                  </div>
+                  <div className="dx-fieldset-header">Round</div>
                   <div className="dx-field">
                     <div className="dx-field-label">Scheme</div>
                     <SelectBox
                       className="dx-field-value"
                       placeholder="Scheme"
-                      displayFormat={"dd MMMM yyyy"}
-                      dateSerializationFormat="yyyy-MM-dd"
                       dataSource={scheme_data}
-                      displayExpr={'name'}
-                      valueExpr={'id'}
+                      displayExpr={"name"}
+                      valueExpr={"id"}
                       deferRendering={false}
-                      value={scheme}
+                      value={schemeId}
                       disabled={error || saving}
-                      onValueChange={(text) => setLabType(text)}
+                      onValueChange={(v) => {
+                        setSchemeId(v);
+                        setReuseFromId(undefined);
+                      }}
                     >
                       <Validator>
                         <RequiredRule message="Scheme is required" />
@@ -293,106 +226,104 @@ const PTCycleEdit = () => {
                     </SelectBox>
                   </div>
                   <div className="dx-field">
-                    <div className="dx-field-label">Effective Date</div>
-                    <DateBox
+                    <div className="dx-field-label">Code</div>
+                    <TextBox
                       className="dx-field-value"
-                      placeholder="Effective Date"
-                      displayFormat={"dd MMMM yyyy"}
-                      dateSerializationFormat="yyyy-MM-dd"
-                      value={effective_date}
+                      placeholder="e.g. 2026-R1"
+                      value={code}
                       disabled={error || saving}
-                      onValueChange={(text) => setEffectiveDate(text)}
+                      onValueChange={(v) => setCode(v)}
                     >
                       <Validator>
-                        <RequiredRule message="Effective Date is required" />
+                        <RequiredRule message="Code is required" />
                       </Validator>
-                    </DateBox>
+                    </TextBox>
                   </div>
-                  <div className="dx-field">
-                    <div className="dx-field-label">Closing Date</div>
-                    <DateBox
-                      className="dx-field-value"
-                      placeholder="Closing Date"
-                      displayFormat={"dd MMMM yyyy"}
-                      dateSerializationFormat="yyyy-MM-dd"
-                      value={closing_date}
-                      disabled={error || saving}
-                      onValueChange={(text) => setClosingDate(text)}
-                    >
-                      <Validator>
-                        <RequiredRule message="Closing Date is required" />
-                      </Validator>
-                    </DateBox>
-                  </div> 
                 </div>
+
                 <div className="dx-fieldset">
-                  <div className="dx-fieldset-header">Timeline</div>
-                  {/* the status is not a choice. A new cycle starts Upcoming
-                      and is moved on a step at a time from the PT Cycle page,
-                      because each step does something - enrolment opens,
-                      panels ship, results are scored. */}
-                  <div className="dx-field">
-                    <div className="dx-field-label">PT Cycle Status</div>
-                    <div className="dx-field-value-static">
-                      <strong>{currentStatusName()}</strong>
-                    </div>
-                  </div>
+                  <div className="dx-fieldset-header">Schedule</div>
+                  {dateField("Enrollment opening date", openingDate, setOpeningDate)}
+                  {dateField("Enrollment closing date", closingDate, setClosingDate)}
+                  {dateField("Sample shipping date", shippingDate, setShippingDate)}
+                  {dateField("Test event start date", testStartDate, setTestStartDate)}
+                  {dateField("Test event stop date", testStopDate, setTestStopDate)}
+                  {dateField("Result submission due date", resultDueDate, setResultDueDate)}
+                  {dateField("Report availability date", reportDate, setReportDate)}
                   <div className="dx-field">
                     <div className="dx-field-value-static">
-                      <small>
-                        {pageConfig.Id == 0
-                          ? "A new PT Cycle opens as Upcoming. Enrolment opens, panels ship and results are scored as you move it on from the PT Cycle page."
-                          : "Move the cycle on from the PT Cycle page, which applies each step in turn."}
+                      <small style={{ color: "#6b7280" }}>
+                        The lifecycle status (Upcoming, Enrolment Open, Enrolment
+                        Closed, Testing, Results Due) follows these dates
+                        automatically. Shipping samples and publishing reports
+                        remain manual steps on the round page.
                       </small>
                     </div>
                   </div>
-                  <div className="dx-field">
-                    <div className="dx-field-label">Shipping Date</div>
-                    <DateBox
-                      className="dx-field-value"
-                      placeholder="Shipping Date"
-                      displayFormat={"dd MMMM yyyy"}
-                      dateSerializationFormat="yyyy-MM-dd"
-                      value={shipping_date}
-                      disabled={error || saving}
-                      onValueChange={(text) => setShippingDate(text)}
-                    >
-                      <Validator>
-                        <RequiredRule message="Shipping Date is required" />
-                      </Validator>
-                    </DateBox>
-                  </div>
-                  <div className="dx-field">
-                    <div className="dx-field-label">Reports Availability Date</div>
-                    <DateBox
-                      className="dx-field-value"
-                      placeholder="Reports Availability Date"
-                      displayFormat={"dd MMMM yyyy"}
-                      dateSerializationFormat="yyyy-MM-dd"
-                      value={reports_availability_date}
-                      disabled={error || saving}
-                      onValueChange={(text) => setReportsAvailabilityDate(text)}
-                    >
-                      <Validator>
-                        <RequiredRule message="Reports Availability Date is required" />
-                      </Validator>
-                    </DateBox>
-                  </div> 
                 </div>
+
                 <div className="dx-fieldset">
-                  <div className="dx-fieldset-header">Description</div>
+                  <div className="dx-fieldset-header">Notes</div>
                   <div className="dx-field">
-                    <HtmlEditor
-                      height="225px"
-                      defaultValue={description}
-                      value={description}
-                      toolbar={toolbar}
-                      onValueChanged={(e) => setDescription(e.value)}
-                    >
-                      <MediaResizing enabled={true} />
-                    </HtmlEditor>
+                    <TextArea
+                      height={100}
+                      placeholder="Any relevant notes for this round"
+                      value={notes}
+                      disabled={error || saving}
+                      onValueChange={(v) => setNotes(v)}
+                    />
                   </div>
                 </div>
+
+                <div className="dx-fieldset">
+                  <div className="dx-fieldset-header">Documents</div>
+                  {documents.length > 0 && (
+                    <ul style={{ margin: "4px 0 10px", paddingLeft: 18 }}>
+                      {documents.map((doc: any) => (
+                        <li key={doc.id} style={{ fontSize: 13 }}>
+                          {doc.name}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                  <FileUploader
+                    multiple={true}
+                    uploadMode="useForm"
+                    selectButtonText="Add documents"
+                    labelText="Instruction forms, resources, etc."
+                    disabled={error || saving}
+                    onValueChanged={(e: any) => setNewFiles(e.value || [])}
+                  />
+                </div>
+
+                {isNew && reuseCandidates.length > 0 && (
+                  <div className="dx-fieldset">
+                    <div className="dx-fieldset-header">Reuse Participants</div>
+                    <div className="dx-field">
+                      <div className="dx-field-label">Copy participants from</div>
+                      <SelectBox
+                        className="dx-field-value"
+                        placeholder="(optional) choose an earlier round"
+                        dataSource={reuseCandidates}
+                        displayExpr={(c: any) => (c ? `${c.code} - ${c.name}` : "")}
+                        valueExpr={"id"}
+                        showClearButton={true}
+                        value={reuseFromId}
+                        disabled={error || saving}
+                        onValueChange={(v) => setReuseFromId(v)}
+                      />
+                    </div>
+                    <div className="dx-field">
+                      <div className="dx-field-value-static">
+                        <small style={{ color: "#6b7280" }}>
+                          All accepted participants of the chosen round are enrolled
+                          automatically and emailed. Leave blank for a fresh round.
+                        </small>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 <div className="dx-field">
                   <div className="dx-field-label">
                     <ValidationSummary id="summaryMain" />
@@ -406,13 +337,8 @@ const PTCycleEdit = () => {
                     disabled={loading || error || saving}
                     useSubmitBehavior={true}
                   >
-                    <LoadIndicator
-                      className="button-indicator"
-                      visible={saving}
-                    />
-                    <span className="dx-button-text">
-                      Submit for Review
-                    </span>
+                    <LoadIndicator className="button-indicator" visible={saving} />
+                    <span className="dx-button-text">Submit for Review</span>
                   </Button>
                 </div>
               </div>
