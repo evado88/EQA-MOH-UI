@@ -101,7 +101,7 @@ const TBXpertUltraResultEdit = () => {
     "",
     "TB Xpert Ultra Result",
     "",
-    Assist.LABORATORY_ROLES,
+    Assist.FACILITY_WRITE_ROLES,
   );
 
   pageConfig.Id = eId == undefined ? 0 : Number(eId);

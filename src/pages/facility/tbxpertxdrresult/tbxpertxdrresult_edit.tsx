@@ -104,7 +104,7 @@ const TBXpertXDRResultEdit = () => {
     "",
     "TB Xpert XDR Result",
     "",
-    Assist.LABORATORY_ROLES,
+    Assist.FACILITY_WRITE_ROLES,
   );
 
   pageConfig.Id = eId == undefined ? 0 : Number(eId);

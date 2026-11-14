@@ -3,6 +3,10 @@ export { default as NotFoundPage } from './404'
 //Auth
 export { default as LoginPage } from '../auth/login'
 export { default as SignupPage } from '../auth/signup'
+export { default as SetPasswordPage } from '../auth/set-password'
+//Scheme self-registration
+export { default as SchemeSelectPage } from './scheme/scheme_select'
+export { default as SchemeRegisterPage } from './scheme/scheme_register'
 
 //ADMIN
 {/* Provider */}
@@ -77,6 +81,11 @@ export { default as AdminHIVVLResultViewPage } from './admin/hivvlresult/hivvlre
 export { default as AdminHIVEIDResultListPage } from './admin/hiveidresult/hiveidresult_list'
 export { default as AdminHIVEIDResultEditPage } from './admin/hiveidresult/hiveidresult_edit'
 export { default as AdminHIVEIDResultViewPage } from './admin/hiveidresult/hiveidresult_view'
+
+{/* BacteriologyResult */}
+export { default as AdminBacteriologyResultListPage } from './admin/bacteriologyresult/bacteriologyresult_list'
+export { default as AdminBacteriologyResultEditPage } from './admin/bacteriologyresult/bacteriologyresult_edit'
+export { default as AdminBacteriologyResultViewPage } from './admin/bacteriologyresult/bacteriologyresult_view'
 {/* Enrollment */}
 export { default as AdminEnrollmentListPage } from './admin/enrollment/enrollment_list'
 export { default as AdminEnrollmentEditPage } from './admin/enrollment/enrollment_edit'
@@ -111,6 +120,11 @@ export { default as FacilityHIVVLResultViewPage } from './facility/hivvlresult/h
 export { default as FacilityHIVEIDResultListPage } from './facility/hiveidresult/hiveidresult_list'
 export { default as FacilityHIVEIDResultEditPage } from './facility/hiveidresult/hiveidresult_edit'
 export { default as FacilityHIVEIDResultViewPage } from './facility/hiveidresult/hiveidresult_view'
+
+{/* BacteriologyResult */}
+export { default as FacilityBacteriologyResultListPage } from './facility/bacteriologyresult/bacteriologyresult_list'
+export { default as FacilityBacteriologyResultEditPage } from './facility/bacteriologyresult/bacteriologyresult_edit'
+export { default as FacilityBacteriologyResultViewPage } from './facility/bacteriologyresult/bacteriologyresult_view'
 {/* Performance */}
 export { default as FacilityPerformanceListPage } from './facility/performance/performance_list'
 export { default as FacilityPerformanceViewPage } from './facility/performance/performance_view'

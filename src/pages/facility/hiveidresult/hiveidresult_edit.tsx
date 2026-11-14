@@ -106,7 +106,7 @@ const HIVEIDResultEdit = () => {
     "",
     "HIV-1 EID Result",
     "",
-    Assist.LABORATORY_ROLES,
+    Assist.FACILITY_WRITE_ROLES,
   );
 
   pageConfig.Id = eId == undefined ? 0 : Number(eId);

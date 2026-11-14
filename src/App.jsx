@@ -11,6 +11,10 @@ import {
   //Auth
   LoginPage,
   SignupPage,
+  SetPasswordPage,
+  // Scheme self-registration
+  SchemeSelectPage,
+  SchemeRegisterPage,
   // Provider
   AdminProviderListPage,
   AdminProviderEditPage,
@@ -82,6 +86,10 @@ import {
   AdminHIVEIDResultListPage,
   AdminHIVEIDResultEditPage,
   AdminHIVEIDResultViewPage,
+  // BacteriologyResult
+  AdminBacteriologyResultListPage,
+  AdminBacteriologyResultEditPage,
+  AdminBacteriologyResultViewPage,
   // Evaluation and reports
   AdminEvaluationViewPage,
   PTReportViewPage,
@@ -109,6 +117,10 @@ import {
   FacilityHIVEIDResultListPage,
   FacilityHIVEIDResultEditPage,
   FacilityHIVEIDResultViewPage,
+  // BacteriologyResult
+  FacilityBacteriologyResultListPage,
+  FacilityBacteriologyResultEditPage,
+  FacilityBacteriologyResultViewPage,
   FacilityPerformanceListPage,
   FacilityPerformanceViewPage,
   FacilityTBXpertUltraResultListPage,
@@ -218,6 +230,11 @@ function App() {
           <Route path="/admin/hiv-eid-results/edit/:eId" element={<AdminHIVEIDResultEditPage/>} />
           <Route path="/admin/hiv-eid-results/add" element={<AdminHIVEIDResultEditPage/>} />
           <Route path="/admin/hiv-eid-results/view/:eId" element={<AdminHIVEIDResultViewPage/>} />
+
+          <Route path="/admin/bacteriology-results/list" element={<AdminBacteriologyResultListPage/>} />
+          <Route path="/admin/bacteriology-results/edit/:eId" element={<AdminBacteriologyResultEditPage/>} />
+          <Route path="/admin/bacteriology-results/add" element={<AdminBacteriologyResultEditPage/>} />
+          <Route path="/admin/bacteriology-results/view/:eId" element={<AdminBacteriologyResultViewPage/>} />
           {/* Round Evaluation */}
           <Route path="/admin/pt-cycles/evaluation/:eId" element={<AdminEvaluationViewPage/>} />
           {/* PT Performance Report */}
@@ -243,6 +260,10 @@ function App() {
           {/* Dashboards */}
           <Route path="/" element={<MemberDashboardPage></MemberDashboardPage>} />
 
+         {/* facility Scheme self-registration */}
+          <Route path="/facility/schemes" element={<SchemeSelectPage/>} />
+          <Route path="/facility/schemes/register/:eId" element={<SchemeRegisterPage/>} />
+
          {/* facility Enrollment */}
           <Route path="/facility/enrollments/list" element={<FacilityEnrollmentListPage/>} />
 
@@ -256,6 +277,10 @@ function App() {
           <Route path="/facility/hiv-eid-results/list" element={<FacilityHIVEIDResultListPage/>} />
           <Route path="/facility/hiv-eid-results/edit/:eId" element={<FacilityHIVEIDResultEditPage/>} />
           <Route path="/facility/hiv-eid-results/view/:eId" element={<FacilityHIVEIDResultViewPage/>} />
+
+          <Route path="/facility/bacteriology-results/list" element={<FacilityBacteriologyResultListPage/>} />
+          <Route path="/facility/bacteriology-results/edit/:eId" element={<FacilityBacteriologyResultEditPage/>} />
+          <Route path="/facility/bacteriology-results/view/:eId" element={<FacilityBacteriologyResultViewPage/>} />
 
          {/* facility HIV-1 Viral Load Result */}
           <Route path="/facility/hiv-vl-results/list" element={<FacilityHIVVLResultListPage/>} />
@@ -279,6 +304,7 @@ function App() {
         <Route element={<AuthLayout />}>
           <Route path="/login" element={<LoginPage></LoginPage>} />
           <Route path="/signup" element={<SignupPage></SignupPage>} />
+          <Route path="/set-password" element={<SetPasswordPage></SetPasswordPage>} />
         </Route>
       </Routes>
     </BrowserRouter>

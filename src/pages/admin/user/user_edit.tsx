@@ -56,6 +56,7 @@ const UserEdit = () => {
   const [laboratoryId, setLaboratoryId] = useState<undefined | number>(
     undefined,
   );
+  const [schemeId, setSchemeId] = useState<undefined | number>(undefined);
   const [provinceId, setProvinceId] = useState<undefined | number>(undefined);
   const [districtId, setDistrictId] = useState<undefined | number>(undefined);
   const [password, setPassword] = useState<undefined | string>(undefined);
@@ -66,6 +67,7 @@ const UserEdit = () => {
   //set up data sources for relationship fields
   const [role_data, setRoleData] = useState<Array<any>>([]);
   const [laboratory_data, setLaboratoryData] = useState<Array<any>>([]);
+  const [scheme_data, setSchemeData] = useState<Array<any>>([]);
   const [province_data, setProvinceData] = useState<Array<any>>([]);
   const [district_data, setDistrictData] = useState<Array<any>>([]);
 
@@ -86,6 +88,11 @@ const UserEdit = () => {
   //a facility account reports for one laboratory; provider staff for none
   const needsLaboratory =
     roleId != undefined && Assist.LABORATORY_ROLES.includes(roleId);
+
+  //a scheme-team role (2-8) is tied to one scheme; Administrator, MOH and
+  //facility roles are not
+  const needsScheme =
+    roleId != undefined && Assist.SCHEME_TEAM_ROLES.includes(roleId);
 
   //104 districts is not a list anybody should scroll, so it follows the province
   const districtsForProvince = provinceId
@@ -113,6 +120,7 @@ const UserEdit = () => {
           //set up data sources for relationship fields
           setRoleData(data.roleList);
           setLaboratoryData(data.laboratoryList);
+          setSchemeData(data.schemeList || []);
           setProvinceData(data.provinceList);
           setDistrictData(data.districtList);
 
@@ -147,16 +155,21 @@ const UserEdit = () => {
     //account
     setRoleId(data.role_id);
     setLaboratoryId(data.laboratory_id ?? undefined);
+    setSchemeId(data.scheme_id ?? undefined);
     setProvinceId(data.province_id ?? undefined);
     setDistrictId(data.district_id ?? undefined);
   };
 
-  /** Moving off a facility role takes the laboratory with it */
+  /** Moving off a facility role takes the laboratory with it; moving off a
+   * scheme-team role takes the scheme */
   const onRoleChange = (value: number) => {
     setRoleId(value);
 
     if (!Assist.LABORATORY_ROLES.includes(value)) {
       setLaboratoryId(undefined);
+    }
+    if (!Assist.SCHEME_TEAM_ROLES.includes(value)) {
+      setSchemeId(undefined);
     }
   };
 
@@ -197,6 +210,7 @@ const UserEdit = () => {
       //account
       role_id: roleId,
       laboratory_id: needsLaboratory ? laboratoryId : null,
+      scheme_id: needsScheme ? schemeId : null,
       province_id: provinceId ?? null,
       district_id: districtId ?? null,
       //service
@@ -411,6 +425,34 @@ const UserEdit = () => {
                       </Validator>
                     </SelectBox>
                   </div>
+
+                  {needsScheme && (
+                    <div className="dx-field">
+                      <div className="dx-field-label">Scheme</div>
+                      <SelectBox
+                        className="dx-field-value"
+                        placeholder="Scheme this role is tied to"
+                        dataSource={scheme_data}
+                        displayExpr={(item: any) =>
+                          item
+                            ? item.code
+                              ? `${item.name} (${item.code})`
+                              : item.name
+                            : ""
+                        }
+                        valueExpr={"id"}
+                        searchEnabled={true}
+                        deferRendering={false}
+                        value={schemeId}
+                        disabled={error || saving}
+                        onValueChange={(value) => setSchemeId(value)}
+                      >
+                        <Validator>
+                          <RequiredRule message="A scheme-team role must be tied to a scheme" />
+                        </Validator>
+                      </SelectBox>
+                    </div>
+                  )}
 
                   {needsLaboratory ? (
                     <div className="dx-field">

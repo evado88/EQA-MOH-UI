@@ -9,10 +9,17 @@ export interface MenuItem {
   items: MenuItem[];
 }
 
-// who sees what: provider staff run the scheme, labs only see their own work
-const ADMIN = Assist.ADMIN_ROLES;
+// who sees what:
+//  - SYSTEM_ADMIN: only the Administrator may manage users, roles and the
+//    whole catalogue (system administration)
+//  - OPERATIONAL: scheme operations (applications, cycles, results, reports) -
+//    the scheme management roles plus the cross-scheme roles (MOH, Admin),
+//    scoped to the user's scheme on the server
+//  - LAB: a participating laboratory's own work
+const SYSTEM_ADMIN = Assist.SYSTEM_ADMIN_ROLES;
+const OPERATIONAL = Assist.ADMIN_ROLES;
 const LAB = Assist.LABORATORY_ROLES;
-const EVERYONE = [...ADMIN, ...LAB];
+const EVERYONE = [...Assist.PROVIDER_ROLES, ...LAB];
 
 export const navigation: MenuItem[] = [
   {
@@ -28,14 +35,14 @@ export const navigation: MenuItem[] = [
     text: "Administration",
     icon: "fa fa-gears",
     path: "#",
-    roles: ADMIN,
+    roles: SYSTEM_ADMIN,
     items: [
       {
         key: "user",
         text: "User",
         icon: "",
         path: "/admin/user/list",
-        roles: ADMIN,
+        roles: SYSTEM_ADMIN,
         items: [],
       },
       {
@@ -43,7 +50,7 @@ export const navigation: MenuItem[] = [
         text: "Audit",
         icon: "",
         path: "/admin/audit/list",
-        roles: ADMIN,
+        roles: SYSTEM_ADMIN,
         items: [],
       },
       {
@@ -51,15 +58,15 @@ export const navigation: MenuItem[] = [
         text: "Role",
         icon: "",
         path: "/admin/role/list",
-        roles: ADMIN,
+        roles: SYSTEM_ADMIN,
         items: [],
-      }, 
+      },
       {
         key: "data-migration",
         text: "Data Migration",
         icon: "",
         path: "/admin/imports/data-migration",
-        roles: ADMIN,
+        roles: SYSTEM_ADMIN,
         items: [],
       },
     ],
@@ -69,14 +76,14 @@ export const navigation: MenuItem[] = [
     text: "Dictionaries",
     icon: "fa fa-cube",
     path: "#",
-    roles: ADMIN,
+    roles: SYSTEM_ADMIN,
     items: [
       {
         key: "stage",
         text: "Stage",
         icon: "",
         path: "/admin/stages/list",
-        roles: ADMIN,
+        roles: SYSTEM_ADMIN,
         items: [],
       },
       {
@@ -84,7 +91,7 @@ export const navigation: MenuItem[] = [
         text: "Status",
         icon: "",
         path: "/admin/statuses/list",
-        roles: ADMIN,
+        roles: SYSTEM_ADMIN,
         items: [],
       },
       {
@@ -92,7 +99,7 @@ export const navigation: MenuItem[] = [
         text: "Lab Type",
         icon: "",
         path: "/admin/lab-types/list",
-        roles: ADMIN,
+        roles: SYSTEM_ADMIN,
         items: [],
       },
       {
@@ -100,9 +107,9 @@ export const navigation: MenuItem[] = [
         text: "PT Cycle Status",
         icon: "",
         path: "/admin/pt-cycle-statuses/list",
-        roles: ADMIN,
+        roles: SYSTEM_ADMIN,
         items: [],
-      }, 
+      },
     ],
   },
   {
@@ -110,14 +117,14 @@ export const navigation: MenuItem[] = [
     text: "Demographics",
     icon: "fa fa-simplybuilt",
     path: "#",
-    roles: ADMIN,
+    roles: SYSTEM_ADMIN,
     items: [
       {
         key: "province",
         text: "Province",
         icon: "",
         path: "/admin/provinces/list",
-        roles: ADMIN,
+        roles: SYSTEM_ADMIN,
         items: [],
       },
       {
@@ -125,9 +132,9 @@ export const navigation: MenuItem[] = [
         text: "District",
         icon: "",
         path: "/admin/districts/list",
-        roles: ADMIN,
+        roles: SYSTEM_ADMIN,
         items: [],
-      }, 
+      },
     ],
   },
   {
@@ -135,14 +142,14 @@ export const navigation: MenuItem[] = [
     text: "Schemes",
     icon: "fa fa fa-thermometer",
     path: "#",
-    roles: ADMIN,
+    roles: SYSTEM_ADMIN,
     items: [
       {
         key: "provider",
         text: "Provider",
         icon: "",
         path: "/admin/providers/list",
-        roles: ADMIN,
+        roles: SYSTEM_ADMIN,
         items: [],
       },
       {
@@ -150,7 +157,7 @@ export const navigation: MenuItem[] = [
         text: "Scheme",
         icon: "",
         path: "/admin/schemes/list",
-        roles: ADMIN,
+        roles: SYSTEM_ADMIN,
         items: [],
       },
       {
@@ -158,7 +165,7 @@ export const navigation: MenuItem[] = [
         text: "Service",
         icon: "",
         path: "/admin/services/list",
-        roles: ADMIN,
+        roles: SYSTEM_ADMIN,
         items: [],
       },
       {
@@ -166,7 +173,7 @@ export const navigation: MenuItem[] = [
         text: "Method",
         icon: "",
         path: "/admin/methods/list",
-        roles: ADMIN,
+        roles: SYSTEM_ADMIN,
         items: [],
       },
       {
@@ -174,9 +181,9 @@ export const navigation: MenuItem[] = [
         text: "Method Sample",
         icon: "",
         path: "/admin/method-samples/list",
-        roles: ADMIN,
+        roles: SYSTEM_ADMIN,
         items: [],
-      }, 
+      },
     ],
   },
   {
@@ -184,14 +191,14 @@ export const navigation: MenuItem[] = [
     text: "Laboratories",
     icon: "fa fa-map-marker",
     path: "#",
-    roles: ADMIN,
+    roles: OPERATIONAL,
     items: [
       {
         key: "laboratory",
         text: "Laboratory",
         icon: "",
         path: "/admin/laboratorys/list",
-        roles: ADMIN,
+        roles: OPERATIONAL,
         items: [],
       },
       {
@@ -199,9 +206,9 @@ export const navigation: MenuItem[] = [
         text: "Laboratory Schemes",
         icon: "",
         path: "/admin/laboratorys/scheme-list",
-        roles: ADMIN,
+        roles: OPERATIONAL,
         items: [],
-      }, 
+      },
     ],
   },
   {
@@ -209,14 +216,14 @@ export const navigation: MenuItem[] = [
     text: "PT Calendar",
     icon: "fa fa-map-marker",
     path: "#",
-    roles: ADMIN,
+    roles: OPERATIONAL,
     items: [
       {
         key: "ptcycle",
         text: "PT Cycle",
         icon: "",
         path: "/admin/pt-cycles/list",
-        roles: ADMIN,
+        roles: OPERATIONAL,
         items: [],
       },
       {
@@ -224,9 +231,9 @@ export const navigation: MenuItem[] = [
         text: "Enrollment",
         icon: "",
         path: "/admin/enrollments/list",
-        roles: ADMIN,
+        roles: OPERATIONAL,
         items: [],
-      }, 
+      },
     ],
   },
   {
@@ -234,16 +241,16 @@ export const navigation: MenuItem[] = [
     text: "Applications",
     icon: "fa fa-stethoscope",
     path: "#",
-    roles: ADMIN,
+    roles: OPERATIONAL,
     items: [
       {
         key: "applications",
         text: "Application",
         icon: "",
         path: "/admin/applications/list",
-        roles: ADMIN,
+        roles: OPERATIONAL,
         items: [],
-      }, 
+      },
     ],
   },
   {
@@ -251,14 +258,14 @@ export const navigation: MenuItem[] = [
     text: "Results",
     icon: "fa fa-stethoscope",
     path: "#",
-    roles: ADMIN,
+    roles: OPERATIONAL,
     items: [
       {
         key: "tbxpertultraresult",
         text: "TB Xpert Ultra Result",
         icon: "",
         path: "/admin/tb-xpert-ultra-results/list",
-        roles: ADMIN,
+        roles: OPERATIONAL,
         items: [],
       },
       {
@@ -266,7 +273,7 @@ export const navigation: MenuItem[] = [
         text: "TB Xpert XDR Result",
         icon: "",
         path: "/admin/tb-xpert-xdr-results/list",
-        roles: ADMIN,
+        roles: OPERATIONAL,
         items: [],
       },
       {
@@ -274,7 +281,7 @@ export const navigation: MenuItem[] = [
         text: "HIV-1 Viral Load Result",
         icon: "",
         path: "/admin/hiv-vl-results/list",
-        roles: ADMIN,
+        roles: OPERATIONAL,
         items: [],
       },
       {
@@ -282,7 +289,15 @@ export const navigation: MenuItem[] = [
         text: "HIV-1 EID Result",
         icon: "",
         path: "/admin/hiv-eid-results/list",
-        roles: ADMIN,
+        roles: OPERATIONAL,
+        items: [],
+      },
+      {
+        key: "bacteriologyresult",
+        text: "Bacteriology Result",
+        icon: "",
+        path: "/admin/bacteriology-results/list",
+        roles: OPERATIONAL,
         items: [],
       },
       {
@@ -290,10 +305,18 @@ export const navigation: MenuItem[] = [
         text: "PT Performance Report",
         icon: "",
         path: "/admin/reports/pt-performance",
-        roles: ADMIN,
+        roles: OPERATIONAL,
         items: [],
       },
     ],
+  },
+  {
+    key: "19-lab-register-scheme",
+    text: "Register for a Scheme",
+    icon: "fa fa-th-large",
+    path: "/facility/schemes",
+    roles: LAB,
+    items: [],
   },
   {
     key: "20-lab-calendar",
@@ -350,6 +373,14 @@ export const navigation: MenuItem[] = [
         text: "HIV-1 EID Results",
         icon: "",
         path: "/facility/hiv-eid-results/list",
+        roles: LAB,
+        items: [],
+      },
+      {
+        key: "lab-bacteriologyresult",
+        text: "Bacteriology Results",
+        icon: "",
+        path: "/facility/bacteriology-results/list",
         roles: LAB,
         items: [],
       },

@@ -18,6 +18,9 @@ class Assist {
   static ROLE_DISTRICT_LAB_COORDINATOR = 8;
   static ROLE_FACILITY_SUPER_USER = 9;
   static ROLE_FACILITY_STAFF = 10;
+  // works across every scheme like a provider role, but may not perform system
+  // administration (managing users, the catalogue, ...)
+  static ROLE_MINISTRY_OF_HEALTH = 11;
 
   // kept for pages written before the roles above existed
   static ROLE_ADMIN = 1;
@@ -28,13 +31,47 @@ class Assist {
     Assist.ROLE_FACILITY_SUPER_USER,
     Assist.ROLE_FACILITY_STAFF,
   ];
+  // a facility super user may enter/edit their facility's data; facility staff
+  // (management/supervisors) may only view it
+  static FACILITY_WRITE_ROLES = [Assist.ROLE_FACILITY_SUPER_USER];
+  static FACILITY_READONLY_ROLES = [Assist.ROLE_FACILITY_STAFF];
 
-  // roles that may administer the scheme
+  // system administration (managing users, roles, the catalogue, imports) is
+  // reserved to the Administrator alone
+  static SYSTEM_ADMIN_ROLES = [Assist.ROLE_ADMINISTRATOR];
+
+  // the scheme team: each tied to a single scheme
+  static SCHEME_TEAM_ROLES = [
+    Assist.ROLE_SCHEME_HEAD,
+    Assist.ROLE_SCHEME_COORDINATOR,
+    Assist.ROLE_SCHEME_QUALITY_OFFICER,
+    Assist.ROLE_FINANCE_OFFICER,
+    Assist.ROLE_PROVINCIAL_BIOMEDICAL_SCIENTIST,
+    Assist.ROLE_EQA_FOCAL_POINT,
+    Assist.ROLE_DISTRICT_LAB_COORDINATOR,
+  ];
+
+  // provider-side roles that work across every scheme without being tied to one
+  static CROSS_SCHEME_ROLES = [
+    Assist.ROLE_ADMINISTRATOR,
+    Assist.ROLE_MINISTRY_OF_HEALTH,
+  ];
+
+  // every provider-side (non-facility) role
+  static PROVIDER_ROLES = [
+    ...Assist.SCHEME_TEAM_ROLES,
+    ...Assist.CROSS_SCHEME_ROLES,
+  ];
+
+  // roles that may administer the scheme's operations (review applications,
+  // run cycles, post announcements, grade results): the scheme management trio
+  // plus the cross-scheme roles (Administrator, MOH)
   static ADMIN_ROLES = [
     Assist.ROLE_ADMINISTRATOR,
     Assist.ROLE_SCHEME_HEAD,
     Assist.ROLE_SCHEME_COORDINATOR,
     Assist.ROLE_SCHEME_QUALITY_OFFICER,
+    Assist.ROLE_MINISTRY_OF_HEALTH,
   ];
 
   // pt cycle statuses - mirror the /pt-cycle-statuses/initialize seed
@@ -69,6 +106,30 @@ class Assist {
   /** Returns true when the signed in user may administer the scheme */
   static isAdminUser(user: any): boolean {
     return !!user && Assist.ADMIN_ROLES.includes(user.role);
+  }
+
+  /** Returns true for the Administrator, the only role that may manage users,
+   * roles and the catalogue */
+  static isSystemAdmin(user: any): boolean {
+    return !!user && Assist.SYSTEM_ADMIN_ROLES.includes(user.role);
+  }
+
+  /** Returns true for any provider-side (non-facility) role */
+  static isProviderUser(user: any): boolean {
+    return !!user && Assist.PROVIDER_ROLES.includes(user.role);
+  }
+
+  /** Returns true when the user may enter/edit facility data. Facility staff
+   * (management/supervisors) are read-only. */
+  static canWriteFacility(user: any): boolean {
+    return !!user && Assist.FACILITY_WRITE_ROLES.includes(user.role);
+  }
+
+  /** The scheme a scheme-team member is tied to, or undefined for the
+   * cross-scheme roles (Administrator, MOH) who see them all */
+  static getUserScheme(user: any): number | undefined {
+    if (!user || Assist.CROSS_SCHEME_ROLES.includes(user.role)) return undefined;
+    return user.scheme_id ? Number(user.scheme_id) : undefined;
   }
 
   /** The laboratory the signed in user reports for, or undefined for provider staff */
