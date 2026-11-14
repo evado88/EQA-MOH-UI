@@ -24,6 +24,7 @@ import {
   AST_METHOD_MIC,
   AstRow,
   AstTable,
+  newAstRow,
   toAstPayload,
   toAstRows,
 } from "../../../components/ast-table";
@@ -73,6 +74,8 @@ const BacteriologyResultEdit = () => {
   const [method_sample, setMethodSample] = useState<undefined | string>(
     undefined,
   );
+  //the sample's name (e.g. "NHRTIBACT E01-26"), used to gate the AST section
+  const [sampleName, setSampleName] = useState<string>("");
 
   //worksheet header
   const [date_samples_received, setDateSamplesReceived] = useState<
@@ -230,6 +233,7 @@ const BacteriologyResultEdit = () => {
     setCycle(data.pt_cycle_id);
     setMethod(data.method_id);
     setMethodSample(data.method_sample_id);
+    setSampleName(data.methodsample?.name ?? data.name ?? "");
 
     setDateSamplesReceived(data.date_samples_received ?? undefined);
     setReceiptTemperature(data.receipt_temperature ?? undefined);
@@ -265,6 +269,14 @@ const BacteriologyResultEdit = () => {
 
   //a specimen that was not worked carries nothing else
   const worked = !testing_not_done;
+
+  // AST is only captured for Sample E (named like "NHRTIBACT E01-26")
+  const isSampleE = sampleName.includes("E01");
+  useEffect(() => {
+    if (isSampleE && ast_performed && ast_disk_diffusion && diskRows.length === 0) {
+      setDiskRows(Array.from({ length: 5 }, () => newAstRow()));
+    }
+  }, [isSampleE, ast_performed, ast_disk_diffusion]);
   const wasUnsuitable = sample_condition === "Unsuitable";
   const morphologyIsOther = gram_morphology === MORPHOLOGY_OTHER;
   const micMethodIsOther = ast_mic_method === MIC_METHOD_OTHER;
@@ -683,10 +695,13 @@ const BacteriologyResultEdit = () => {
                     Final Organism Identification
                   </div>
                   <div className="dx-field">
-                    <div className="dx-field-label">Organism Identified</div>
-                    <TextBox
+                    <div className="dx-field-label">Bacterial Identification</div>
+                    <SelectBox
                       className="dx-field-value"
-                      placeholder="e.g. Klebsiella pneumoniae"
+                      placeholder="Select the organism identified"
+                      dataSource={options.organismList ?? []}
+                      searchEnabled={true}
+                      showClearButton={true}
                       value={organism_identified}
                       disabled={error || saving || !worked}
                       onValueChange={(text) => setOrganismIdentified(text)}
@@ -696,7 +711,7 @@ const BacteriologyResultEdit = () => {
                           <RequiredRule message="Please indicate the organism identified" />
                         )}
                       </Validator>
-                    </TextBox>
+                    </SelectBox>
                   </div>
                   <div className="dx-field">
                     <div className="dx-field-label">Comments</div>
@@ -711,9 +726,25 @@ const BacteriologyResultEdit = () => {
                   </div>
                 </div>
 
+                {worked && !isSampleE && (
+                  <div className="dx-fieldset">
+                    <div className="dx-fieldset-header">
+                      Antimicrobial Susceptibility Testing
+                    </div>
+                    <div className="dx-field">
+                      <small>
+                        AST is only captured for Sample E to contain cost, so it
+                        is not entered for this sample.
+                      </small>
+                    </div>
+                  </div>
+                )}
+
+                {isSampleE && (
+                  <>
                 <div className="dx-fieldset">
                   <div className="dx-fieldset-header">
-                    Antimicrobial Susceptibility Testing
+                    Antimicrobial Susceptibility Testing (Sample E)
                   </div>
                   <div className="dx-field">
                     <div className="dx-field-label">
@@ -814,6 +845,8 @@ const BacteriologyResultEdit = () => {
                     maxRows={options.astMaxRows ?? 15}
                     disabled={error || saving}
                   />
+                )}
+                  </>
                 )}
 
                 <div className="dx-fieldset">

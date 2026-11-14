@@ -1,4 +1,5 @@
 import SelectBox from "devextreme-react/select-box";
+import Autocomplete from "devextreme-react/autocomplete";
 import { NumberBox } from "devextreme-react/number-box";
 import { TextBox } from "devextreme-react/text-box";
 import Button from "devextreme-react/button";
@@ -149,22 +150,18 @@ export const AstTable = ({
             <tr key={row.key}>
               <td>{index + 1}</td>
               <td style={{ paddingRight: "6px" }}>
-                <SelectBox
-                  placeholder="Antibiotic"
+                {/* a textbox that suggests from the controlled antibiotic list
+                    as the user types; any agent may still be typed in full */}
+                <Autocomplete
+                  placeholder="Type an antibiotic"
                   dataSource={antibiotics}
-                  acceptCustomValue={true}
-                  searchEnabled={true}
-                  showClearButton={true}
                   value={row.antibiotic}
                   disabled={disabled}
+                  showClearButton={true}
+                  minSearchLength={0}
                   onValueChange={(value) =>
                     setRow(row.key, { antibiotic: value })
                   }
-                  onCustomItemCreating={(e: any) => {
-                    // the guideline gains agents faster than this list does, so
-                    // a laboratory may report one that is not offered
-                    e.customItem = e.text;
-                  }}
                 />
               </td>
               <td style={{ paddingRight: "6px" }}>

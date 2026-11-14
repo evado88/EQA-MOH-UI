@@ -27,6 +27,7 @@ import {
   AST_METHOD_MIC,
   AstRow,
   AstTable,
+  newAstRow,
   toAstPayload,
   toAstRows,
 } from "../../../components/ast-table";
@@ -271,6 +272,19 @@ const BacteriologyResultEdit = () => {
   const wasUnsuitable = sample_condition === "Unsuitable";
   const morphologyIsOther = gram_morphology === MORPHOLOGY_OTHER;
   const micMethodIsOther = ast_mic_method === MIC_METHOD_OTHER;
+
+  // AST is only captured for Sample E (to contain cost). The bacteriology
+  // samples are named like "NHRTIBACT E01-26"; Sample E is the one carrying E01.
+  const sampleName =
+    (method_sample_data.find((s: any) => s.id === method_sample)?.name as string) ?? "";
+  const isSampleE = sampleName.includes("E01");
+
+  // default the Sample E disk-diffusion table to 5 antibiotic rows
+  useEffect(() => {
+    if (isSampleE && ast_performed && ast_disk_diffusion && diskRows.length === 0) {
+      setDiskRows(Array.from({ length: 5 }, () => newAstRow()));
+    }
+  }, [isSampleE, ast_performed, ast_disk_diffusion]);
 
   /** Ticking 'testing not done' empties the rest of the worksheet */
   const onTestingNotDoneChange = (value: boolean) => {
@@ -715,10 +729,13 @@ const BacteriologyResultEdit = () => {
                     Final Organism Identification
                   </div>
                   <div className="dx-field">
-                    <div className="dx-field-label">Organism Identified</div>
-                    <TextBox
+                    <div className="dx-field-label">Bacterial Identification</div>
+                    <SelectBox
                       className="dx-field-value"
-                      placeholder="e.g. Klebsiella pneumoniae"
+                      placeholder="Select the identified organism"
+                      dataSource={options.organismList ?? []}
+                      searchEnabled={true}
+                      showClearButton={true}
                       value={organism_identified}
                       disabled={error || saving || !worked}
                       onValueChange={(text) => setOrganismIdentified(text)}
@@ -728,7 +745,7 @@ const BacteriologyResultEdit = () => {
                           <RequiredRule message="Please indicate the organism identified" />
                         )}
                       </Validator>
-                    </TextBox>
+                    </SelectBox>
                   </div>
                   <div className="dx-field">
                     <div className="dx-field-label">Comments</div>
@@ -743,9 +760,24 @@ const BacteriologyResultEdit = () => {
                   </div>
                 </div>
 
+                {worked && !isSampleE && (
+                  <div className="dx-fieldset">
+                    <div className="dx-field">
+                      <div className="dx-field-value-static">
+                        <small>
+                          Antimicrobial Susceptibility Testing is only captured
+                          for Sample E, so it does not apply to this sample.
+                        </small>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {isSampleE && (
+                  <>
                 <div className="dx-fieldset">
                   <div className="dx-fieldset-header">
-                    Antimicrobial Susceptibility Testing
+                    Antimicrobial Susceptibility Testing (Sample E)
                   </div>
                   <div className="dx-field">
                     <div className="dx-field-label">
@@ -846,6 +878,8 @@ const BacteriologyResultEdit = () => {
                     maxRows={options.astMaxRows ?? 15}
                     disabled={error || saving}
                   />
+                )}
+                  </>
                 )}
 
                 <div className="dx-fieldset">
