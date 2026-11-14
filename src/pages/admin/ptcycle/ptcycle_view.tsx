@@ -18,6 +18,18 @@ import SelectBox from "devextreme-react/select-box";
 import DateBox from "devextreme-react/date-box";
 import ValidationSummary from "devextreme-react/validation-summary";
 
+// colour coding for round/lab progress
+const STATUS_COLOR: Record<string, string> = {
+  complete: "#047857", // green
+  in_progress: "#d97706", // amber
+  not_started: "#b91c1c", // red
+};
+const STATUS_LABEL: Record<string, string> = {
+  complete: "Complete",
+  in_progress: "In progress",
+  not_started: "Not started",
+};
+
 const AdminPTCycle = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -26,6 +38,7 @@ const AdminPTCycle = () => {
   const [cycle, setCycle] = useState<null | any>(null);
   const [documents, setDocuments] = useState<Array<any>>([]);
   const [extensions, setExtensions] = useState<Array<any>>([]);
+  const [stats, setStats] = useState<any>(null);
 
   // extend-dates form
   const [extField, setExtField] = useState<string | undefined>(undefined);
@@ -66,10 +79,12 @@ const AdminPTCycle = () => {
       Assist.loadData(pageConfig.Title, `pt-cycles/id/${pageConfig.Id}`),
       Assist.loadData("Documents", `pt-cycles/documents/${pageConfig.Id}`),
       Assist.loadData("Extensions", `pt-cycles/extensions/${pageConfig.Id}`),
+      Assist.loadData("Statistics", `pt-cycles/statistics/${pageConfig.Id}`),
     ])
-      .then(([data, docs, exts]: [any, any, any]) => {
+      .then(([data, docs, exts, st]: [any, any, any, any]) => {
         setLoading(false);
         setCycle(data.ptcycle);
+        setStats(st);
         setStatus(data.ptcycle.status.status_name);
         setStage(data.ptcycle.stage.stage_name);
         setStageId(data.ptcycle.stage_id);
@@ -313,6 +328,80 @@ const AdminPTCycle = () => {
         </Col>
 
         <Col sz={12} sm={12} lg={5}>
+          {stats != null && (
+            <Card title="Round Statistics" showHeader={true}>
+              <div className="form">
+                <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 10 }}>
+                  <div
+                    style={{
+                      width: 64,
+                      height: 64,
+                      borderRadius: "50%",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontWeight: 700,
+                      fontSize: 17,
+                      color: "#fff",
+                      background: STATUS_COLOR[stats.status] || "#6b7280",
+                    }}
+                  >
+                    {stats.completion_pct}%
+                  </div>
+                  <div>
+                    <div style={{ fontWeight: 700 }}>
+                      {stats.entered} of {stats.total} sample results entered
+                    </div>
+                    <div style={{ fontSize: 13, color: "#6b7280" }}>
+                      {STATUS_LABEL[stats.status]} ·{" "}
+                      {stats.labs_complete} of {stats.lab_count} lab(s) complete
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{ height: 8, background: "#eef0f2", borderRadius: 999, marginBottom: 12 }}>
+                  <div
+                    style={{
+                      width: `${stats.completion_pct}%`,
+                      height: "100%",
+                      borderRadius: 999,
+                      background: STATUS_COLOR[stats.status] || "#6b7280",
+                    }}
+                  />
+                </div>
+
+                {stats.total === 0 ? (
+                  <p style={{ color: "#6b7280", fontSize: 13 }}>
+                    No result sheets yet — ship the samples to open them.
+                  </p>
+                ) : (
+                  <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                    {stats.labs.map((l: any) => (
+                      <div
+                        key={l.lab_id}
+                        style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13 }}
+                      >
+                        <span
+                          title={STATUS_LABEL[l.status]}
+                          style={{
+                            width: 10,
+                            height: 10,
+                            borderRadius: "50%",
+                            background: STATUS_COLOR[l.status],
+                            flex: "0 0 auto",
+                          }}
+                        />
+                        <span style={{ flex: 1 }}>{l.lab_name}</span>
+                        <span style={{ color: "#6b7280" }}>
+                          {l.entered}/{l.total}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </Card>
+          )}
           {cycle != null && isApproved() && (
             <Card title="Round Actions" showHeader={true}>
               <div className="form">
