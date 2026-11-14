@@ -14,6 +14,9 @@ import DateBox from "devextreme-react/date-box";
 import { useAuth } from "../../../context/AuthContext";
 import PageConfig from "../../../classes/page-config";
 import Assist from "../../../classes/assist";
+import SampleReceipt from "../../../components/SampleReceipt";
+import ResultFiles from "../../../components/ResultFiles";
+import PanelProgress from "../../../components/PanelProgress";
 import { LoadIndicator } from "devextreme-react/load-indicator";
 import { useNavigate, useParams } from "react-router-dom";
 import HtmlEditor, { MediaResizing } from "devextreme-react/html-editor";
@@ -294,11 +297,22 @@ const TBXpertXDRResultEdit = () => {
             return;
           }
 
-          Assist.showMessage(
-            `You have successfully submitted the ${pageConfig.Title}!`,
-            "success",
-          );
-          navigate(`/facility/tb-xpert-xdr-results/list`);
+          Assist.loadData(
+            "Panel progress",
+            `result-navigation?result_form=tb_xpert_xdr&result_id=${pageConfig.Id}`,
+          )
+            .then((nav: any) => {
+              Assist.showMessage(
+                `Saved. ${nav.entered} of ${nav.total} sample results entered.`,
+                "success",
+              );
+              navigate(
+                nav.next_pending_id
+                  ? `/facility/tb-xpert-xdr-results/edit/${nav.next_pending_id}`
+                  : `/facility/tb-xpert-xdr-results/list`,
+              );
+            })
+            .catch(() => navigate(`/facility/tb-xpert-xdr-results/list`));
         })
         .catch((message) => {
           setSaving(false);
@@ -331,6 +345,24 @@ const TBXpertXDRResultEdit = () => {
         <Col sz={12} sm={12} lg={7}>
           <Card title="Properties" showHeader={true}>
             <form id="formMain" onSubmit={onFormSubmit}>
+              {pageConfig.Id != 0 && (
+                <PanelProgress
+                  resultForm="tb_xpert_xdr"
+                  resultId={eId}
+                  editBase="/facility/tb-xpert-xdr-results/edit"
+                />
+              )}
+              <SampleReceipt
+                ptCycleId={cycle}
+                labId={laboratory}
+                methodSampleId={method_sample}
+                userId={user.userid}
+                disabled={error || saving}
+              />
+              <ResultFiles
+                enrollmentId={enrollment}
+                disabled={error || saving}
+              />
               <div className="form">
                 <div className="dx-fieldset">
                   <div className="dx-fieldset-header">Name</div>

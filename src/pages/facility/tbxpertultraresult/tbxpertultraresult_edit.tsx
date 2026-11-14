@@ -22,6 +22,9 @@ import { useTheme } from "../../../context/ThemeContext";
 import { useAuth } from "../../../context/AuthContext";
 import PageConfig from "../../../classes/page-config";
 import Assist from "../../../classes/assist";
+import SampleReceipt from "../../../components/SampleReceipt";
+import ResultFiles from "../../../components/ResultFiles";
+import PanelProgress from "../../../components/PanelProgress";
 import { LoadIndicator } from "devextreme-react/load-indicator";
 import { useNavigate, useParams } from "react-router-dom";
 import HtmlEditor, {
@@ -268,11 +271,22 @@ const TBXpertUltraResultEdit = () => {
             return;
           }
 
-          Assist.showMessage(
-            `You have successfully submitted the ${pageConfig.Title}!`,
-            "success",
-          );
-          navigate(`/facility/tb-xpert-ultra-results/list`);
+          Assist.loadData(
+            "Panel progress",
+            `result-navigation?result_form=tb_xpert_ultra&result_id=${pageConfig.Id}`,
+          )
+            .then((nav: any) => {
+              Assist.showMessage(
+                `Saved. ${nav.entered} of ${nav.total} sample results entered.`,
+                "success",
+              );
+              navigate(
+                nav.next_pending_id
+                  ? `/facility/tb-xpert-ultra-results/edit/${nav.next_pending_id}`
+                  : `/facility/tb-xpert-ultra-results/list`,
+              );
+            })
+            .catch(() => navigate(`/facility/tb-xpert-ultra-results/list`));
         })
         .catch((message) => {
           setSaving(false);
@@ -340,6 +354,24 @@ const TBXpertUltraResultEdit = () => {
         <Col sz={12} sm={12} lg={7}>
           <Card title="Properties" showHeader={true}>
             <form id="formMain" onSubmit={onFormSubmit}>
+              {pageConfig.Id != 0 && (
+                <PanelProgress
+                  resultForm="tb_xpert_ultra"
+                  resultId={eId}
+                  editBase="/facility/tb-xpert-ultra-results/edit"
+                />
+              )}
+              <SampleReceipt
+                ptCycleId={cycle}
+                labId={laboratory}
+                methodSampleId={method_sample}
+                userId={user.userid}
+                disabled={error || saving}
+              />
+              <ResultFiles
+                enrollmentId={enrollment}
+                disabled={error || saving}
+              />
               <div className="form">
                 <div className="dx-fieldset">
                   <div className="dx-fieldset-header">Name</div>
@@ -619,11 +651,6 @@ const TBXpertUltraResultEdit = () => {
                       disabled={error || saving || !resultInterpretableYes}
                       onValueChange={(text) => setUltraSPC(text)}
                     >
-                      <Validator>
-                        {resultInterpretableYes && (
-                          <RequiredRule message="Ultra SPC is required" />
-                        )}
-                      </Validator>
                     </NumberBox>
                   </div>
                   <div className="dx-field">
@@ -635,11 +662,6 @@ const TBXpertUltraResultEdit = () => {
                       disabled={error || saving || !resultInterpretableYes}
                       onValueChange={(text) => setIS1081IS6110(text)}
                     >
-                      <Validator>
-                        {resultInterpretableYes && (
-                          <RequiredRule message="IS1081-IS6110 is required" />
-                        )}
-                      </Validator>
                     </NumberBox>
                   </div>
                   <div className="dx-field">
@@ -651,11 +673,6 @@ const TBXpertUltraResultEdit = () => {
                       disabled={error || saving || !resultInterpretableYes}
                       onValueChange={(text) => setrpoB1(text)}
                     >
-                      <Validator>
-                        {resultInterpretableYes && (
-                          <RequiredRule message="rpoB1 is required" />
-                        )}
-                      </Validator>
                     </NumberBox>
                   </div>
                   <div className="dx-field">
@@ -667,11 +684,6 @@ const TBXpertUltraResultEdit = () => {
                       disabled={error || saving || !resultInterpretableYes}
                       onValueChange={(text) => setrpoB2(text)}
                     >
-                      <Validator>
-                        {resultInterpretableYes && (
-                          <RequiredRule message="rpoB2 is required" />
-                        )}
-                      </Validator>
                     </NumberBox>
                   </div>
                   <div className="dx-field">
@@ -683,11 +695,6 @@ const TBXpertUltraResultEdit = () => {
                       disabled={error || saving || !resultInterpretableYes}
                       onValueChange={(text) => setrpoB3(text)}
                     >
-                      <Validator>
-                        {resultInterpretableYes && (
-                          <RequiredRule message="rpoB3 is required" />
-                        )}
-                      </Validator>
                     </NumberBox>
                   </div>
                   <div className="dx-field">
@@ -699,11 +706,6 @@ const TBXpertUltraResultEdit = () => {
                       disabled={error || saving || !resultInterpretableYes}
                       onValueChange={(text) => setrpoB4(text)}
                     >
-                      <Validator>
-                        {resultInterpretableYes && (
-                          <RequiredRule message="rpoB4 is required" />
-                        )}
-                      </Validator>
                     </NumberBox>
                   </div>
                   <div className="dx-field">

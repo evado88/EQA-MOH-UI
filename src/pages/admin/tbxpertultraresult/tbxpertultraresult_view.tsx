@@ -9,6 +9,7 @@ import { LoadPanel } from "devextreme-react/load-panel";
 import { useAuth } from "../../../context/AuthContext";
 import PageConfig from "../../../classes/page-config";
 import Assist from "../../../classes/assist";
+import ResultFiles from "../../../components/ResultFiles";
 import { LoadIndicator } from "devextreme-react/load-indicator";
 import { useNavigate, useParams } from "react-router-dom";
 import HtmlEditor, { MediaResizing } from "devextreme-react/html-editor";
@@ -276,6 +277,9 @@ const AdminTBXpertUltraResult = () => {
         icon={"gear"}
         url="#"
       ></Titlebar>
+      {tbxpertultraresultDetail != null && (
+        <ResultFiles enrollmentId={tbxpertultraresultDetail.enrollment_id} readOnly={true} />
+      )}
       {/* end widget */}
 
       {/* chart start */}

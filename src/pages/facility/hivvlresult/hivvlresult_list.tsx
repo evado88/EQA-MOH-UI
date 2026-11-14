@@ -242,13 +242,6 @@ const FacilityHIVVLResultList = () => {
                 hidingPriority={16}
               ></Column>
               <Column
-                dataField="date_panel_received"
-                caption="Panel Received"
-                dataType="date"
-                format="dd MMM yyyy"
-                hidingPriority={15}
-              ></Column>
-              <Column
                 dataField="date_tested"
                 caption="Panel Tested"
                 dataType="date"

@@ -51,9 +51,6 @@ const AdminHIVEIDResultEdit = () => {
   );
 
   //panel header
-  const [date_panel_received, setDatePanelReceived] = useState<
-    undefined | Date | string
-  >(undefined);
   const [date_tested, setDateTested] = useState<undefined | Date | string>(
     undefined,
   );
@@ -158,7 +155,6 @@ const AdminHIVEIDResultEdit = () => {
     setMethod(data.method_id);
     setMethodSample(data.method_sample_id);
 
-    setDatePanelReceived(data.date_panel_received ?? undefined);
     setDateTested(data.date_tested ?? undefined);
     setDetectionAssay(data.detection_assay);
     setExtractionAssay(data.extraction_assay);
@@ -226,7 +222,6 @@ const AdminHIVEIDResultEdit = () => {
       method_id: method,
       method_sample_id: method_sample,
       //panel header
-      date_panel_received: asDate(date_panel_received),
       date_tested: asDate(date_tested),
       detection_assay: detection_assay,
       extraction_assay: extraction_assay,
@@ -356,23 +351,6 @@ const AdminHIVEIDResultEdit = () => {
 
                 <div className="dx-fieldset">
                   <div className="dx-fieldset-header">Panel Details</div>
-                  <div className="dx-field">
-                    <div className="dx-field-label">Date PT Panel Received</div>
-                    <DateBox
-                      className="dx-field-value"
-                      placeholder="Date PT Panel Received"
-                      type="date"
-                      displayFormat="dd MMM yyyy"
-                      max={new Date()}
-                      value={date_panel_received}
-                      disabled={error || saving}
-                      onValueChange={(value) => setDatePanelReceived(value)}
-                    >
-                      <Validator>
-                        <RequiredRule message="Date PT Panel Received is required" />
-                      </Validator>
-                    </DateBox>
-                  </div>
                   <div className="dx-field">
                     <div className="dx-field-label">Date PT Panel Tested</div>
                     <DateBox

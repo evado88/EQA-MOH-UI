@@ -15,6 +15,9 @@ import DateBox from "devextreme-react/date-box";
 import { useAuth } from "../../../context/AuthContext";
 import PageConfig from "../../../classes/page-config";
 import Assist from "../../../classes/assist";
+import SampleReceipt from "../../../components/SampleReceipt";
+import ResultFiles from "../../../components/ResultFiles";
+import PanelProgress from "../../../components/PanelProgress";
 import { LoadIndicator } from "devextreme-react/load-indicator";
 import { useNavigate, useParams } from "react-router-dom";
 import { confirm } from "devextreme/ui/dialog";
@@ -51,9 +54,6 @@ const HIVVLResultEdit = () => {
   );
 
   //panel header
-  const [date_panel_received, setDatePanelReceived] = useState<
-    undefined | Date | string
-  >(undefined);
   const [date_tested, setDateTested] = useState<undefined | Date | string>(
     undefined,
   );
@@ -173,7 +173,6 @@ const HIVVLResultEdit = () => {
     setMethodSample(data.method_sample_id);
 
     //panel header
-    setDatePanelReceived(data.date_panel_received ?? undefined);
     setDateTested(data.date_tested ?? undefined);
     setDetectionAssay(data.detection_assay);
     setExtractionAssay(data.extraction_assay);
@@ -253,7 +252,6 @@ const HIVVLResultEdit = () => {
       method_id: method,
       method_sample_id: method_sample,
       //panel header
-      date_panel_received: asDate(date_panel_received),
       date_tested: asDate(date_tested),
       detection_assay: detection_assay,
       extraction_assay: extraction_assay,
@@ -294,11 +292,22 @@ const HIVVLResultEdit = () => {
             return;
           }
 
-          Assist.showMessage(
-            `You have successfully submitted the ${pageConfig.Title}!`,
-            "success",
-          );
-          navigate(`/facility/hiv-vl-results/list`);
+          Assist.loadData(
+            "Panel progress",
+            `result-navigation?result_form=hiv_vl&result_id=${pageConfig.Id}`,
+          )
+            .then((nav: any) => {
+              Assist.showMessage(
+                `Saved. ${nav.entered} of ${nav.total} sample results entered.`,
+                "success",
+              );
+              navigate(
+                nav.next_pending_id
+                  ? `/facility/hiv-vl-results/edit/${nav.next_pending_id}`
+                  : `/facility/hiv-vl-results/list`,
+              );
+            })
+            .catch(() => navigate(`/facility/hiv-vl-results/list`));
         })
         .catch((message) => {
           setSaving(false);
@@ -329,6 +338,24 @@ const HIVVLResultEdit = () => {
         <Col sz={12} sm={12} lg={7}>
           <Card title="Properties" showHeader={true}>
             <form id="formMain" onSubmit={onFormSubmit}>
+              {pageConfig.Id != 0 && (
+                <PanelProgress
+                  resultForm="hiv_vl"
+                  resultId={eId}
+                  editBase="/facility/hiv-vl-results/edit"
+                />
+              )}
+              <SampleReceipt
+                ptCycleId={cycle}
+                labId={laboratory}
+                methodSampleId={method_sample}
+                userId={user.userid}
+                disabled={error || saving}
+              />
+              <ResultFiles
+                enrollmentId={enrollment}
+                disabled={error || saving}
+              />
               <div className="form">
                 <div className="dx-fieldset">
                   <div className="dx-fieldset-header">Sample</div>
@@ -411,23 +438,6 @@ const HIVVLResultEdit = () => {
 
                 <div className="dx-fieldset">
                   <div className="dx-fieldset-header">Panel Details</div>
-                  <div className="dx-field">
-                    <div className="dx-field-label">Date PT Panel Received</div>
-                    <DateBox
-                      className="dx-field-value"
-                      placeholder="Date PT Panel Received"
-                      type="date"
-                      displayFormat="dd MMM yyyy"
-                      max={new Date()}
-                      value={date_panel_received}
-                      disabled={error || saving}
-                      onValueChange={(value) => setDatePanelReceived(value)}
-                    >
-                      <Validator>
-                        <RequiredRule message="Date PT Panel Received is required" />
-                      </Validator>
-                    </DateBox>
-                  </div>
                   <div className="dx-field">
                     <div className="dx-field-label">Date PT Panel Tested</div>
                     <DateBox

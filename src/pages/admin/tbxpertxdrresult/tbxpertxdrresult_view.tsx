@@ -11,6 +11,7 @@ import { confirm } from "devextreme/ui/dialog";
 import { useAuth } from "../../../context/AuthContext";
 import PageConfig from "../../../classes/page-config";
 import Assist from "../../../classes/assist";
+import ResultFiles from "../../../components/ResultFiles";
 import { useNavigate, useParams } from "react-router-dom";
 
 const AdminTBXpertXDRResultView = () => {
@@ -110,6 +111,9 @@ const AdminTBXpertXDRResultView = () => {
         icon={"gear"}
         url="#"
       ></Titlebar>
+      {detail != null && (
+        <ResultFiles enrollmentId={detail.enrollment_id} readOnly={true} />
+      )}
 
       <Row>
         <Col sz={12} sm={12} lg={7}>

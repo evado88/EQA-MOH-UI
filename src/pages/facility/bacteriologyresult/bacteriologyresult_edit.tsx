@@ -16,6 +16,9 @@ import DateBox from "devextreme-react/date-box";
 import { useAuth } from "../../../context/AuthContext";
 import PageConfig from "../../../classes/page-config";
 import Assist from "../../../classes/assist";
+import SampleReceipt from "../../../components/SampleReceipt";
+import ResultFiles from "../../../components/ResultFiles";
+import PanelProgress from "../../../components/PanelProgress";
 import { LoadIndicator } from "devextreme-react/load-indicator";
 import { useNavigate, useParams } from "react-router-dom";
 import { confirm } from "devextreme/ui/dialog";
@@ -413,11 +416,22 @@ const BacteriologyResultEdit = () => {
             return;
           }
 
-          Assist.showMessage(
-            `You have successfully submitted the ${pageConfig.Title}!`,
-            "success",
-          );
-          navigate(`/facility/bacteriology-results/list`);
+          Assist.loadData(
+            "Panel progress",
+            `result-navigation?result_form=bacteriology&result_id=${pageConfig.Id}`,
+          )
+            .then((nav: any) => {
+              Assist.showMessage(
+                `Saved. ${nav.entered} of ${nav.total} sample results entered.`,
+                "success",
+              );
+              navigate(
+                nav.next_pending_id
+                  ? `/facility/bacteriology-results/edit/${nav.next_pending_id}`
+                  : `/facility/bacteriology-results/list`,
+              );
+            })
+            .catch(() => navigate(`/facility/bacteriology-results/list`));
         })
         .catch((message) => {
           setSaving(false);
@@ -471,6 +485,24 @@ const BacteriologyResultEdit = () => {
         <Col sz={12} sm={12} lg={9}>
           <Card title="Properties" showHeader={true}>
             <form id="formMain" onSubmit={onFormSubmit}>
+              {pageConfig.Id != 0 && (
+                <PanelProgress
+                  resultForm="bacteriology"
+                  resultId={eId}
+                  editBase="/facility/bacteriology-results/edit"
+                />
+              )}
+              <SampleReceipt
+                ptCycleId={cycle}
+                labId={laboratory}
+                methodSampleId={method_sample}
+                userId={user.userid}
+                disabled={error || saving}
+              />
+              <ResultFiles
+                enrollmentId={enrollment}
+                disabled={error || saving}
+              />
               <div className="form">
                 <div className="dx-fieldset">
                   <div className="dx-fieldset-header">Sample</div>

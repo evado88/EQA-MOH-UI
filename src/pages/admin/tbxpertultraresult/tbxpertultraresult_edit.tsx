@@ -511,9 +511,6 @@ const TBXpertUltraResultEdit = () => {
                       disabled={error || saving}
                       onValueChange={(text) => setUltraSPC(text)}
                     >
-                      <Validator>
-                        <RequiredRule message="Ultra SPC is required" />
-                      </Validator>
                     </NumberBox>
                   </div>
                   <div className="dx-field">
@@ -527,9 +524,6 @@ const TBXpertUltraResultEdit = () => {
                       disabled={error || saving}
                       onValueChange={(text) => setIS1081IS6110(text)}
                     >
-                      <Validator>
-                        <RequiredRule message="IS1081-IS6110 is required" />
-                      </Validator>
                     </NumberBox>
                   </div>
                   <div className="dx-field">
@@ -543,9 +537,6 @@ const TBXpertUltraResultEdit = () => {
                       disabled={error || saving}
                       onValueChange={(text) => setrpoB1(text)}
                     >
-                      <Validator>
-                        <RequiredRule message="rpoB1 is required" />
-                      </Validator>
                     </NumberBox>
                   </div>
                   <div className="dx-field">
@@ -559,9 +550,6 @@ const TBXpertUltraResultEdit = () => {
                       disabled={error || saving}
                       onValueChange={(text) => setrpoB2(text)}
                     >
-                      <Validator>
-                        <RequiredRule message="rpoB2 is required" />
-                      </Validator>
                     </NumberBox>
                   </div>
                   <div className="dx-field">
@@ -575,9 +563,6 @@ const TBXpertUltraResultEdit = () => {
                       disabled={error || saving}
                       onValueChange={(text) => setrpoB3(text)}
                     >
-                      <Validator>
-                        <RequiredRule message="rpoB3 is required" />
-                      </Validator>
                     </NumberBox>
                   </div>
                   <div className="dx-field">
@@ -591,9 +576,6 @@ const TBXpertUltraResultEdit = () => {
                       disabled={error || saving}
                       onValueChange={(text) => setrpoB4(text)}
                     >
-                      <Validator>
-                        <RequiredRule message="rpoB4 is required" />
-                      </Validator>
                     </NumberBox>
                   </div>
                   <div className="dx-field">

@@ -3,7 +3,14 @@ import "devextreme/dist/css/dx.greenmist.compact.css";
 import MainLayout from "./components/MainLayout";
 import AuthLayout from "./components/AuthLayout";
 import PrivateRoute from "./auth/PrivateRoute";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useParams } from "react-router-dom";
+
+// Remounts an edit page when its :eId changes, so moving between a panel's
+// samples (A1 -> A2 -> ...) reloads the form for the new sample.
+function EditWithReload({ Page }) {
+  const { eId } = useParams();
+  return <Page key={eId} />;
+}
 import {
   MemberDashboardPage,
   //Error
@@ -280,26 +287,26 @@ function App() {
 
          {/* facility HIV-1 EID Result */}
           <Route path="/facility/hiv-eid-results/list" element={<FacilityHIVEIDResultListPage/>} />
-          <Route path="/facility/hiv-eid-results/edit/:eId" element={<FacilityHIVEIDResultEditPage/>} />
+          <Route path="/facility/hiv-eid-results/edit/:eId" element={<EditWithReload Page={FacilityHIVEIDResultEditPage}/>} />
           <Route path="/facility/hiv-eid-results/view/:eId" element={<FacilityHIVEIDResultViewPage/>} />
 
           <Route path="/facility/bacteriology-results/list" element={<FacilityBacteriologyResultListPage/>} />
-          <Route path="/facility/bacteriology-results/edit/:eId" element={<FacilityBacteriologyResultEditPage/>} />
+          <Route path="/facility/bacteriology-results/edit/:eId" element={<EditWithReload Page={FacilityBacteriologyResultEditPage}/>} />
           <Route path="/facility/bacteriology-results/view/:eId" element={<FacilityBacteriologyResultViewPage/>} />
 
          {/* facility HIV-1 Viral Load Result */}
           <Route path="/facility/hiv-vl-results/list" element={<FacilityHIVVLResultListPage/>} />
-          <Route path="/facility/hiv-vl-results/edit/:eId" element={<FacilityHIVVLResultEditPage/>} />
+          <Route path="/facility/hiv-vl-results/edit/:eId" element={<EditWithReload Page={FacilityHIVVLResultEditPage}/>} />
           <Route path="/facility/hiv-vl-results/view/:eId" element={<FacilityHIVVLResultViewPage/>} />
 
          {/* facility TB Xpert XDR Result */}
           <Route path="/facility/tb-xpert-xdr-results/list" element={<FacilityTBXpertXDRResultListPage/>} />
-          <Route path="/facility/tb-xpert-xdr-results/edit/:eId" element={<FacilityTBXpertXDRResultEditPage/>} />
+          <Route path="/facility/tb-xpert-xdr-results/edit/:eId" element={<EditWithReload Page={FacilityTBXpertXDRResultEditPage}/>} />
           <Route path="/facility/tb-xpert-xdr-results/view/:eId" element={<FacilityTBXpertXDRResultViewPage/>} />
 
          {/* facility TB Xpert Ultra Result */}
           <Route path="/facility/tb-xpert-ultra-results/list" element={<FacilityTBXpertUltraResultListPage/>} />
-          <Route path="/facility/tb-xpert-ultra-results/edit/:eId" element={<FacilityTBXpertUltraResultEditPage/>} />
+          <Route path="/facility/tb-xpert-ultra-results/edit/:eId" element={<EditWithReload Page={FacilityTBXpertUltraResultEditPage}/>} />
           <Route path="/facility/tb-xpert-ultra-results/add" element={<FacilityTBXpertUltraResultEditPage/>} />
           <Route path="/facility/tb-xpert-ultra-results/view/:eId" element={<FacilityTBXpertUltraResultViewPage/>} />
 

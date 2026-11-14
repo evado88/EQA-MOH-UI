@@ -120,12 +120,6 @@ const FacilityHIVEIDResultView = () => {
                 <div className="dx-fieldset">
                   <div className="dx-fieldset-header">Panel Details</div>
                   <div className="dx-field">
-                    <div className="dx-field-label">Date PT Panel Received</div>
-                    <div className="dx-field-value-static">
-                      <strong>{Assist.formatDateLong(detail.date_panel_received)}</strong>
-                    </div>
-                  </div>
-                  <div className="dx-field">
                     <div className="dx-field-label">Date PT Panel Tested</div>
                     <div className="dx-field-value-static">
                       <strong>{Assist.formatDateLong(detail.date_tested)}</strong>
