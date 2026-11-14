@@ -45,6 +45,9 @@ const AdminPTCycle = () => {
   const [extDate, setExtDate] = useState<string | undefined>(undefined);
   const [extReason, setExtReason] = useState<string>("");
 
+  // dev-only phase jump (never rendered in a production build)
+  const [devPhase, setDevPhase] = useState<number | undefined>(undefined);
+
   const EXTEND_FIELDS = [
     { id: "closing_date", name: "Enrollment closing date" },
     { id: "result_submission_due_date", name: "Result submission due date" },
@@ -157,6 +160,37 @@ const AdminPTCycle = () => {
       "Publish reports? This scores the round and makes the reports available to the laboratories.",
       "Reports published.",
     );
+
+  // ---- dev-only: jump straight to a lifecycle phase (testing convenience) ----
+  const onDevPhase = () => {
+    if (!devPhase) {
+      Assist.showMessage("Choose a phase to jump to", "error");
+      return;
+    }
+    confirm(
+      `Back-date this cycle's schedule so it reads as "${Assist.PT_CYCLE_STATUS_NAMES[devPhase]}"? ` +
+        "For testing only — it rewrites the dates and the shipped/published flags.",
+      "Confirm phase jump",
+    ).then((ok) => {
+      if (!ok) return;
+      setSaving(true);
+      Assist.postPutData(
+        pageConfig.Title,
+        `pt-cycles/dev-set-phase/${eId}`,
+        { user_id: user.userid, pt_cyle_status_id: devPhase },
+        1,
+      )
+        .then((data: any) => {
+          setSaving(false);
+          Assist.showMessage(data?.message || "Phase set.", "success");
+          load();
+        })
+        .catch((message) => {
+          setSaving(false);
+          Assist.showMessage(message, "error");
+        });
+    });
+  };
 
   // ---- extend dates ----
   const onExtend = (e: React.FormEvent) => {
@@ -470,6 +504,59 @@ const AdminPTCycle = () => {
                       publishing are manual because they open result forms and run
                       scoring.
                     </small>
+                  </div>
+                </div>
+              </div>
+            </Card>
+          )}
+
+          {import.meta.env.DEV && cycle != null && (
+            <Card title="Dev: Jump to Phase" showHeader={true}>
+              <div className="form">
+                <div className="dx-field">
+                  <div className="dx-field-value-static">
+                    <small style={{ color: "#b45309" }}>
+                      Testing only. Rewrites the schedule around today and the
+                      shipped/published flags so the round sits in the chosen
+                      phase; result sheets are opened from Samples Shipped onward.
+                      Not shown in production builds.
+                    </small>
+                  </div>
+                </div>
+                <div className="dx-field">
+                  <div className="dx-field-label">Phase</div>
+                  <SelectBox
+                    className="dx-field-value"
+                    placeholder="Choose a phase"
+                    dataSource={[
+                      Assist.PT_CYCLE_UPCOMING,
+                      Assist.PT_CYCLE_ENROLMENT_OPEN,
+                      Assist.PT_CYCLE_ENROLMENT_CLOSED,
+                      Assist.PT_CYCLE_SAMPLES_SHIPPED,
+                      Assist.PT_CYCLE_TESTING,
+                      Assist.PT_CYCLE_RESULTS_DUE,
+                      Assist.PT_CYCLE_REPORT_AVAILABLE,
+                    ].map((id) => ({ id, name: Assist.PT_CYCLE_STATUS_NAMES[id] }))}
+                    displayExpr="name"
+                    valueExpr="id"
+                    value={devPhase}
+                    disabled={saving}
+                    onValueChange={setDevPhase}
+                  />
+                </div>
+                <div className="dx-field">
+                  <div className="dx-field-label"></div>
+                  <div className="dx-field-value">
+                    <Button
+                      width="100%"
+                      type={saving ? "normal" : "default"}
+                      disabled={saving}
+                      icon="clock"
+                      onClick={onDevPhase}
+                    >
+                      <LoadIndicator className="button-indicator" visible={saving} />
+                      <span className="dx-button-text">Set Phase</span>
+                    </Button>
                   </div>
                 </div>
               </div>
