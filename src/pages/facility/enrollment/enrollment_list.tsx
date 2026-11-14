@@ -244,6 +244,7 @@ const FacilityEnrollmentList = () => {
                 <GridButton
                   text="Enrol"
                   hint="Enrol in this cycle"
+                  visible={Assist.canWriteFacility(user)}
                   onClick={(e: any) => onEnrol(e.row.data)}
                 />
               </Column>

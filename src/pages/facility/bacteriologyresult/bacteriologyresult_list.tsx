@@ -205,7 +205,7 @@ const FacilityBacteriologyResultList = () => {
                 sortOrder="asc"
                 cellRender={(e) => {
                   const target =
-                    e.data.status.status_name == "Draft"
+                    e.data.status.status_name == "Draft" && Assist.canWriteFacility(user)
                       ? `/facility/bacteriology-results/edit/${e.data.id}`
                       : `/facility/bacteriology-results/view/${e.data.id}`;
                   return <Link to={target}>{e.text}</Link>;

@@ -203,7 +203,7 @@ const FacilityTBXpertXDRResultList = () => {
                 sortOrder="asc"
                 cellRender={(e) => {
                   const target =
-                    e.data.status.status_name == "Draft"
+                    e.data.status.status_name == "Draft" && Assist.canWriteFacility(user)
                       ? `/facility/tb-xpert-xdr-results/edit/${e.data.id}`
                       : `/facility/tb-xpert-xdr-results/view/${e.data.id}`;
                   return <Link to={target}>{e.text}</Link>;
