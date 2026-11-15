@@ -77,6 +77,8 @@ const BacteriologyResultEdit = () => {
   const [method_sample, setMethodSample] = useState<undefined | string>(
     undefined,
   );
+  // the sample's name (e.g. "NHRTIBACT E01-26"), used to gate the AST section
+  const [sampleName, setSampleName] = useState<string>("");
 
   //worksheet header
   const [date_samples_received, setDateSamplesReceived] = useState<
@@ -234,6 +236,7 @@ const BacteriologyResultEdit = () => {
     setCycle(data.pt_cycle_id);
     setMethod(data.method_id);
     setMethodSample(data.method_sample_id);
+    setSampleName(data.methodsample?.name ?? data.name ?? "");
 
     setDateSamplesReceived(data.date_samples_received ?? undefined);
     setReceiptTemperature(data.receipt_temperature ?? undefined);
@@ -275,8 +278,6 @@ const BacteriologyResultEdit = () => {
 
   // AST is only captured for Sample E (to contain cost). The bacteriology
   // samples are named like "NHRTIBACT E01-26"; Sample E is the one carrying E01.
-  const sampleName =
-    (method_sample_data.find((s: any) => s.id === method_sample)?.name as string) ?? "";
   const isSampleE = sampleName.includes("E01");
 
   // default the Sample E disk-diffusion table to 5 antibiotic rows

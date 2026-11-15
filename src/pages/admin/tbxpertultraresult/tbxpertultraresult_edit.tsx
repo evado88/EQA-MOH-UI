@@ -295,8 +295,6 @@ const TBXpertUltraResultEdit = () => {
                     <SelectBox
                       className="dx-field-value"
                       placeholder="Scheme"
-                      displayFormat={"dd MMMM yyyy"}
-                      dateSerializationFormat="yyyy-MM-dd"
                       dataSource={scheme_data}
                       displayExpr={'name'}
                       valueExpr={'id'}
@@ -315,8 +313,6 @@ const TBXpertUltraResultEdit = () => {
                     <SelectBox
                       className="dx-field-value"
                       placeholder="Service"
-                      displayFormat={"dd MMMM yyyy"}
-                      dateSerializationFormat="yyyy-MM-dd"
                       dataSource={service_data}
                       displayExpr={'name'}
                       valueExpr={'id'}
@@ -335,8 +331,6 @@ const TBXpertUltraResultEdit = () => {
                     <SelectBox
                       className="dx-field-value"
                       placeholder="Method"
-                      displayFormat={"dd MMMM yyyy"}
-                      dateSerializationFormat="yyyy-MM-dd"
                       dataSource={method_data}
                       displayExpr={'name'}
                       valueExpr={'id'}
@@ -355,8 +349,6 @@ const TBXpertUltraResultEdit = () => {
                     <SelectBox
                       className="dx-field-value"
                       placeholder="Method Sample"
-                      displayFormat={"dd MMMM yyyy"}
-                      dateSerializationFormat="yyyy-MM-dd"
                       dataSource={method_sample_data}
                       displayExpr={'name'}
                       valueExpr={'id'}
@@ -378,8 +370,6 @@ const TBXpertUltraResultEdit = () => {
                     <SelectBox
                       className="dx-field-value"
                       placeholder="Laboratory"
-                      displayFormat={"dd MMMM yyyy"}
-                      dateSerializationFormat="yyyy-MM-dd"
                       dataSource={laboratory_data}
                       displayExpr={'name'}
                       valueExpr={'id'}
@@ -398,8 +388,6 @@ const TBXpertUltraResultEdit = () => {
                     <SelectBox
                       className="dx-field-value"
                       placeholder="Enrollment"
-                      displayFormat={"dd MMMM yyyy"}
-                      dateSerializationFormat="yyyy-MM-dd"
                       dataSource={enrollment_data}
                       displayExpr={'name'}
                       valueExpr={'id'}
@@ -418,8 +406,6 @@ const TBXpertUltraResultEdit = () => {
                     <SelectBox
                       className="dx-field-value"
                       placeholder="Cycle"
-                      displayFormat={"dd MMMM yyyy"}
-                      dateSerializationFormat="yyyy-MM-dd"
                       dataSource={cycle_data}
                       displayExpr={'name'}
                       valueExpr={'id'}
@@ -441,8 +427,6 @@ const TBXpertUltraResultEdit = () => {
                     <SelectBox
                       className="dx-field-value"
                       placeholder="Result Interpretable"
-                      displayFormat={"dd MMMM yyyy"}
-                      dateSerializationFormat="yyyy-MM-dd"
                       value={result_interpretable}
                       disabled={error || saving}
                       onValueChange={(text) => setResultInterpretable(text)}
@@ -457,8 +441,6 @@ const TBXpertUltraResultEdit = () => {
                     <SelectBox
                       className="dx-field-value"
                       placeholder="TB Detection Result"
-                      displayFormat={"dd MMMM yyyy"}
-                      dateSerializationFormat="yyyy-MM-dd"
                       value={tb_detection_result}
                       disabled={error || saving}
                       onValueChange={(text) => setTBDetectionResult(text)}
@@ -473,8 +455,6 @@ const TBXpertUltraResultEdit = () => {
                     <SelectBox
                       className="dx-field-value"
                       placeholder="Rif Result"
-                      displayFormat={"dd MMMM yyyy"}
-                      dateSerializationFormat="yyyy-MM-dd"
                       value={rif_result}
                       disabled={error || saving}
                       onValueChange={(text) => setRifResult(text)}
@@ -489,8 +469,6 @@ const TBXpertUltraResultEdit = () => {
                     <SelectBox
                       className="dx-field-value"
                       placeholder="Uninterpretable Result"
-                      displayFormat={"dd MMMM yyyy"}
-                      dateSerializationFormat="yyyy-MM-dd"
                       value={uninterpretable_result}
                       disabled={error || saving}
                       onValueChange={(text) => setUninterpretableResult(text)}
@@ -505,8 +483,6 @@ const TBXpertUltraResultEdit = () => {
                     <NumberBox
                       className="dx-field-value"
                       placeholder="Ultra SPC"
-                      displayFormat={"dd MMMM yyyy"}
-                      dateSerializationFormat="yyyy-MM-dd"
                       value={ultra_spc}
                       disabled={error || saving}
                       onValueChange={(text) => setUltraSPC(text)}
@@ -518,8 +494,6 @@ const TBXpertUltraResultEdit = () => {
                     <NumberBox
                       className="dx-field-value"
                       placeholder="IS1081-IS6110"
-                      displayFormat={"dd MMMM yyyy"}
-                      dateSerializationFormat="yyyy-MM-dd"
                       value={is1081_is6110}
                       disabled={error || saving}
                       onValueChange={(text) => setIS1081IS6110(text)}
@@ -531,8 +505,6 @@ const TBXpertUltraResultEdit = () => {
                     <NumberBox
                       className="dx-field-value"
                       placeholder="rpoB1"
-                      displayFormat={"dd MMMM yyyy"}
-                      dateSerializationFormat="yyyy-MM-dd"
                       value={rpob1}
                       disabled={error || saving}
                       onValueChange={(text) => setrpoB1(text)}
@@ -544,8 +516,6 @@ const TBXpertUltraResultEdit = () => {
                     <NumberBox
                       className="dx-field-value"
                       placeholder="rpoB2"
-                      displayFormat={"dd MMMM yyyy"}
-                      dateSerializationFormat="yyyy-MM-dd"
                       value={rpob2}
                       disabled={error || saving}
                       onValueChange={(text) => setrpoB2(text)}
@@ -557,8 +527,6 @@ const TBXpertUltraResultEdit = () => {
                     <NumberBox
                       className="dx-field-value"
                       placeholder="rpoB3"
-                      displayFormat={"dd MMMM yyyy"}
-                      dateSerializationFormat="yyyy-MM-dd"
                       value={rpob3}
                       disabled={error || saving}
                       onValueChange={(text) => setrpoB3(text)}
@@ -570,8 +538,6 @@ const TBXpertUltraResultEdit = () => {
                     <NumberBox
                       className="dx-field-value"
                       placeholder="rpoB4"
-                      displayFormat={"dd MMMM yyyy"}
-                      dateSerializationFormat="yyyy-MM-dd"
                       value={rpob4}
                       disabled={error || saving}
                       onValueChange={(text) => setrpoB4(text)}
@@ -583,8 +549,6 @@ const TBXpertUltraResultEdit = () => {
                     <NumberBox
                       className="dx-field-value"
                       placeholder="Xpert Module Number"
-                      displayFormat={"dd MMMM yyyy"}
-                      dateSerializationFormat="yyyy-MM-dd"
                       value={xpert_module_number}
                       disabled={error || saving}
                       onValueChange={(text) => setXpertModuleNumber(text)}

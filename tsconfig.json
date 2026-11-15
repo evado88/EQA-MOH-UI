@@ -1,0 +1,32 @@
+{
+  // Editor-only TypeScript config (the app is built by Vite, not tsc). Its main
+  // job is to enable modern module features so `import.meta.env` is recognised,
+  // and to let the mixed .tsx/.jsx codebase resolve cleanly. It is deliberately
+  // permissive (strict off, JS not type-checked) so it does not surface a flood
+  // of pre-existing issues.
+  "compilerOptions": {
+    "target": "ES2020",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+
+    // mixed codebase: let .js/.jsx imports resolve, but do not type-check them
+    "allowJs": true,
+    "checkJs": false,
+
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+
+    // keep the editor quiet on an existing, loosely-typed project
+    "strict": false,
+    "noImplicitAny": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false
+  },
+  "include": ["src"]
+}

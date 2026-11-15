@@ -510,7 +510,7 @@ const AdminPTCycle = () => {
             </Card>
           )}
 
-          {import.meta.env.DEV && cycle != null && (
+          {import.meta.env.VITE_ENABLE_DEV_TOOLS === "true" && cycle != null && (
             <Card title="Dev: Jump to Phase" showHeader={true}>
               <div className="form">
                 <div className="dx-field">

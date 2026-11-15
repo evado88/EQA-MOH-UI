@@ -226,8 +226,6 @@ const ServiceEdit = () => {
                     <SelectBox
                       className="dx-field-value"
                       placeholder="Scheme"
-                      displayFormat={"dd MMMM yyyy"}
-                      dateSerializationFormat="yyyy-MM-dd"
                       dataSource={scheme_data}
                       displayExpr={'name'}
                       valueExpr={'id'}

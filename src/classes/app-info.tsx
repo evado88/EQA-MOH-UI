@@ -1,14 +1,17 @@
 const AppInfo = {
   appName: "EIMS",
   appCode: "EIMS",
-  apiUrl: "http://127.0.0.1:8800/",
+  // API base URLs come from build-time Vite env vars so dev and the deployed
+  // server differ without code changes; the localhost values are the dev
+  // fallback used when no .env is present. Set VITE_API_URL (and friends) to
+  // the public API URL when building for the server. Keep the trailing slash.
+  apiUrl: import.meta.env.VITE_API_URL || "http://127.0.0.1:8800/",
   // The PT reports are rendered by XtraReports from the ASP.NET reporting
   // service. Until that is deployed this points at the placeholder renderer
-  // in the FastAPI backend; the paths are identical, so moving over is a
-  // change to this one line.
-  reportApiUrl: "http://127.0.0.1:8800/",
+  // in the FastAPI backend; the paths are identical.
+  reportApiUrl: import.meta.env.VITE_REPORT_URL || "http://127.0.0.1:8800/",
   onlineApiUrl: "",
-  localApiUrl: "http://127.0.0.1:8700/",
+  localApiUrl: import.meta.env.VITE_LOCAL_API_URL || "http://127.0.0.1:8700/",
   configApiUrl: "sacco-config/1",
   auditApiUrl:"audit/",
   uploadUrl: "",

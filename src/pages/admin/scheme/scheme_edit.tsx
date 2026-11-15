@@ -244,8 +244,6 @@ const SchemeEdit = () => {
                     <SelectBox
                       className="dx-field-value"
                       placeholder="Provider"
-                      displayFormat={"dd MMMM yyyy"}
-                      dateSerializationFormat="yyyy-MM-dd"
                       dataSource={provider_data}
                       displayExpr={'name'}
                       valueExpr={'id'}

@@ -250,8 +250,6 @@ const EnrollmentEdit = () => {
                     <SelectBox
                       className="dx-field-value"
                       placeholder="Scheme"
-                      displayFormat={"dd MMMM yyyy"}
-                      dateSerializationFormat="yyyy-MM-dd"
                       dataSource={scheme_data}
                       displayExpr={'name'}
                       valueExpr={'id'}
@@ -270,8 +268,6 @@ const EnrollmentEdit = () => {
                     <SelectBox
                       className="dx-field-value"
                       placeholder="Service"
-                      displayFormat={"dd MMMM yyyy"}
-                      dateSerializationFormat="yyyy-MM-dd"
                       dataSource={service_data}
                       displayExpr={'name'}
                       valueExpr={'id'}
@@ -290,8 +286,6 @@ const EnrollmentEdit = () => {
                     <SelectBox
                       className="dx-field-value"
                       placeholder="Method"
-                      displayFormat={"dd MMMM yyyy"}
-                      dateSerializationFormat="yyyy-MM-dd"
                       dataSource={method_data}
                       displayExpr={'name'}
                       valueExpr={'id'}
@@ -313,8 +307,6 @@ const EnrollmentEdit = () => {
                     <SelectBox
                       className="dx-field-value"
                       placeholder="Laboratory"
-                      displayFormat={"dd MMMM yyyy"}
-                      dateSerializationFormat="yyyy-MM-dd"
                       dataSource={laboratory_data}
                       displayExpr={'name'}
                       valueExpr={'id'}
@@ -333,8 +325,6 @@ const EnrollmentEdit = () => {
                     <SelectBox
                       className="dx-field-value"
                       placeholder="Cycle"
-                      displayFormat={"dd MMMM yyyy"}
-                      dateSerializationFormat="yyyy-MM-dd"
                       dataSource={cycle_data}
                       displayExpr={'name'}
                       valueExpr={'id'}

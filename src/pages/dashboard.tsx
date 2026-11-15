@@ -273,8 +273,7 @@ const MyDashboard = () => {
                 <ValueAxis
                   name="percent"
                   position="right"
-                  max={100}
-                  min={0}
+                  visualRange={{ startValue: 0, endValue: 100 }}
                 ></ValueAxis>
                 <Legend
                   verticalAlignment="bottom"
@@ -436,7 +435,7 @@ const MyDashboard = () => {
               >
                 <CommonSeriesSettings
                   argumentField="scheme"
-                  type="stackedBar"
+                  type="stackedbar"
                 />
                 <Series
                   name="Satisfactory"
@@ -465,7 +464,7 @@ const MyDashboard = () => {
         <Col sz={12} sm={12} lg={6}>
           <Card title="Results by Form" showHeader={true}>
             <Chart dataSource={summary?.resultFormList ?? []} id="formChart">
-              <CommonSeriesSettings argumentField="label" type="stackedBar" />
+              <CommonSeriesSettings argumentField="label" type="stackedbar" />
               <Series name="Draft" valueField="draft" color="#b0bec5" />
               <Series name="Submitted" valueField="submitted" color={AMBER} />
               <Series
