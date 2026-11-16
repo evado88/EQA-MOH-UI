@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Titlebar } from "../../../components/titlebar";
 import { Card } from "../../../components/card";
+import SubmissionInfo from "../../../components/SubmissionInfo";
 import { Row } from "../../../components/row";
 import { Col } from "../../../components/column";
 import { LoadPanel } from "devextreme-react/load-panel";
@@ -118,8 +119,8 @@ const FacilityBacteriologyResultView = () => {
                   {field("Sample Condition", detail.sample_condition)}
                   {field("Reason", detail.sample_condition_reason)}
                   {field(
-                    "Date of Submission",
-                    Assist.formatDateLong(detail.date_submitted),
+                    "Date Tested",
+                    Assist.formatDateLong(detail.date_tested),
                   )}
                 </div>
 
@@ -188,12 +189,12 @@ const FacilityBacteriologyResultView = () => {
                     "Date Reviewed",
                     Assist.formatDateLong(detail.reviewed_on),
                   )}
-                  {field("Internal Notes", detail.description)}
                   {field("Status", detail.status.status_name)}
                 </div>
               </div>
             )}
           </Card>
+          <SubmissionInfo resultForm="bacteriology" resultId={eId} />
         </Col>
       </Row>
     </div>

@@ -158,8 +158,8 @@ const AdminBacteriologyResultView = () => {
                   {field("Sample Condition", detail.sample_condition)}
                   {field("Reason", detail.sample_condition_reason)}
                   {field(
-                    "Date of Submission",
-                    Assist.formatDateLong(detail.date_submitted),
+                    "Date Tested",
+                    Assist.formatDateLong(detail.date_tested),
                   )}
                 </div>
 

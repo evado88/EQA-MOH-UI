@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Titlebar } from "../../../components/titlebar";
 import { Card } from "../../../components/card";
+import SubmissionInfo from "../../../components/SubmissionInfo";
 import { Row } from "../../../components/row";
 import { Col } from "../../../components/column";
 import { LoadPanel } from "devextreme-react/load-panel";
@@ -258,6 +259,7 @@ const FacilityTBXpertUltraResultView = () => {
               </div>
             )}
           </Card>
+          <SubmissionInfo resultForm="tb_xpert_ultra" resultId={eId} />
         </Col>
       </Row>
     </div>

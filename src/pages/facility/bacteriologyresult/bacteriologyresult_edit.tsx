@@ -64,7 +64,6 @@ const BacteriologyResultEdit = () => {
   const { eId } = useParams();
 
   const [name, setName] = useState<undefined | string>(undefined);
-  const [description, setDescription] = useState<undefined | string>(undefined);
 
   //properties
   const [scheme, setScheme] = useState<undefined | string>(undefined);
@@ -80,7 +79,7 @@ const BacteriologyResultEdit = () => {
   const [sampleName, setSampleName] = useState<string>("");
 
   //worksheet header
-  const [date_submitted, setDateSubmitted] = useState<
+  const [date_tested, setDateTested] = useState<
     undefined | Date | string
   >(undefined);
 
@@ -214,7 +213,6 @@ const BacteriologyResultEdit = () => {
 
   const updateVaues = (data: any) => {
     setName(data.name);
-    setDescription(data.description);
 
     setScheme(data.scheme_id);
     setLaboratory(data.lab_id);
@@ -225,7 +223,7 @@ const BacteriologyResultEdit = () => {
     setMethodSample(data.method_sample_id);
     setSampleName(data.methodsample?.name ?? data.name ?? "");
 
-    setDateSubmitted(data.date_submitted ?? undefined);
+    setDateTested(data.date_tested ?? undefined);
 
     setTestingNotDone(data.testing_not_done ?? false);
     setTestingNotDoneReason(data.testing_not_done_reason);
@@ -343,7 +341,6 @@ const BacteriologyResultEdit = () => {
     const postData = {
       user_id: user.userid,
       name: name,
-      description: description,
       scheme_id: scheme,
       lab_id: laboratory,
       service_id: service,
@@ -352,7 +349,7 @@ const BacteriologyResultEdit = () => {
       method_id: method,
       method_sample_id: method_sample,
       //worksheet header
-      date_submitted: asDate(date_submitted),
+      date_tested: asDate(date_tested),
       //the specimen
       testing_not_done: testing_not_done,
       testing_not_done_reason: testing_not_done
@@ -523,17 +520,18 @@ const BacteriologyResultEdit = () => {
                 </div>
 
                 <div className="dx-fieldset">
-                  <div className="dx-fieldset-header">Submission</div>
+                  <div className="dx-fieldset-header">Testing</div>
                   <div className="dx-field">
-                    <div className="dx-field-label">Date of Submission</div>
+                    <div className="dx-field-label">Date Tested</div>
                     <DateBox
                       className="dx-field-value"
-                      placeholder="Date of Submission"
+                      placeholder="Date Tested"
                       type="date"
                       displayFormat="dd MMM yyyy"
-                      value={date_submitted}
+                      max={new Date()}
+                      value={date_tested}
                       disabled={error || saving}
-                      onValueChange={(value) => setDateSubmitted(value)}
+                      onValueChange={(value) => setDateTested(value)}
                     />
                   </div>
                 </div>
@@ -847,17 +845,6 @@ const BacteriologyResultEdit = () => {
                       value={reviewed_on}
                       disabled={error || saving}
                       onValueChange={(value) => setReviewedOn(value)}
-                    />
-                  </div>
-                  <div className="dx-field">
-                    <div className="dx-field-label">Internal Notes</div>
-                    <TextArea
-                      className="dx-field-value"
-                      placeholder="Internal notes kept against this worksheet"
-                      height={70}
-                      value={description}
-                      disabled={error || saving}
-                      onValueChange={(text) => setDescription(text)}
                     />
                   </div>
                 </div>

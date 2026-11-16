@@ -90,7 +90,7 @@ const BacteriologyResultEdit = () => {
   const [sample_condition_reason, setSampleConditionReason] = useState<
     undefined | string
   >(undefined);
-  const [date_submitted, setDateSubmitted] = useState<
+  const [date_tested, setDateTested] = useState<
     undefined | Date | string
   >(undefined);
 
@@ -239,7 +239,7 @@ const BacteriologyResultEdit = () => {
     setReceiptTemperature(data.receipt_temperature ?? undefined);
     setSampleCondition(data.sample_condition);
     setSampleConditionReason(data.sample_condition_reason);
-    setDateSubmitted(data.date_submitted ?? undefined);
+    setDateTested(data.date_tested ?? undefined);
 
     setTestingNotDone(data.testing_not_done ?? false);
     setTestingNotDoneReason(data.testing_not_done_reason);
@@ -368,7 +368,7 @@ const BacteriologyResultEdit = () => {
       receipt_temperature: receipt_temperature ?? null,
       sample_condition: sample_condition,
       sample_condition_reason: wasUnsuitable ? sample_condition_reason : null,
-      date_submitted: asDate(date_submitted),
+      date_tested: asDate(date_tested),
       //the specimen
       testing_not_done: testing_not_done,
       testing_not_done_reason: testing_not_done
@@ -581,15 +581,15 @@ const BacteriologyResultEdit = () => {
                     </TextArea>
                   </div>
                   <div className="dx-field">
-                    <div className="dx-field-label">Date of Submission</div>
+                    <div className="dx-field-label">Date Tested</div>
                     <DateBox
                       className="dx-field-value"
-                      placeholder="Date of Submission"
+                      placeholder="Date Tested"
                       type="date"
                       displayFormat="dd MMM yyyy"
-                      value={date_submitted}
+                      value={date_tested}
                       disabled={error || saving}
-                      onValueChange={(value) => setDateSubmitted(value)}
+                      onValueChange={(value) => setDateTested(value)}
                     />
                   </div>
                 </div>

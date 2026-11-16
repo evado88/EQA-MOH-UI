@@ -281,8 +281,8 @@ const AdminBacteriologyResultList = () => {
                 visible={false}
               ></Column>
               <Column
-                dataField="date_submitted"
-                caption="Date Submitted"
+                dataField="date_tested"
+                caption="Date Tested"
                 dataType="date"
                 format="dd MMM yyyy"
                 hidingPriority={9}

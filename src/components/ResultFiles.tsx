@@ -73,12 +73,13 @@ export const ResultFiles = ({ enrollmentId, disabled, readOnly }: Props) => {
   };
 
   return (
-    <Card title="Result Files (optional)" showHeader={true}>
+    <Card title="Result Files (required)" showHeader={true}>
       <div className="form">
         <div className="dx-fieldset">
           <p style={{ margin: "0 0 8px", color: "#6b7280", fontSize: 13 }}>
-            Attach supporting files for this panel, such as the physical result
-            Excel sheet. Optional.
+            Attach the worksheet file for this panel, such as the physical
+            result Excel sheet. At least one file is required before results can
+            be submitted.
           </p>
 
           {files.length === 0 ? (

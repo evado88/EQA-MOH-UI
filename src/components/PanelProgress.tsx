@@ -30,6 +30,7 @@ export const PanelProgress = ({ resultForm, resultId, editBase }: Props) => {
   if (!nav || !nav.total) return null;
 
   const pct = Math.round((nav.entered / nav.total) * 100);
+  const current = nav.samples.find((s: any) => s.is_current);
 
   return (
     <div
@@ -41,6 +42,34 @@ export const PanelProgress = ({ resultForm, resultId, editBase }: Props) => {
         margin: "0 0 14px",
       }}
     >
+      {current && (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "baseline",
+            gap: 10,
+            marginBottom: 10,
+          }}
+        >
+          <span
+            style={{
+              background: "#0d6e6e",
+              color: "#fff",
+              borderRadius: 8,
+              padding: "4px 12px",
+              fontSize: 18,
+              fontWeight: 700,
+              lineHeight: 1.2,
+            }}
+          >
+            Sample {current.sample_name}
+          </span>
+          <span style={{ fontSize: 13, color: "#6b7280", fontWeight: 600 }}>
+            {current.status_name}
+          </span>
+        </div>
+      )}
+
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
         <strong style={{ color: nav.entered === nav.total ? "#047857" : "#111827" }}>
           {nav.entered} of {nav.total} sample results entered
