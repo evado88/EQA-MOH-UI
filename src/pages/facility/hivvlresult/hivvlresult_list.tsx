@@ -206,7 +206,7 @@ const FacilityHIVVLResultList = () => {
                 sortOrder="asc"
                 cellRender={(e) => {
                   const target =
-                    e.data.status.status_name == "Draft" && Assist.canWriteFacility(user)
+                    Assist.canWriteFacility(user) && Assist.resultCaptureOpen(e.data)
                       ? `/facility/hiv-vl-results/edit/${e.data.id}`
                       : `/facility/hiv-vl-results/view/${e.data.id}`;
                   return <Link to={target}>{e.text}</Link>;

@@ -122,6 +122,10 @@ const FacilityBacteriologyResultList = () => {
 
   const chosenCycle = () => cycles.find((c: any) => c.pt_cycle_id === cycleId);
 
+  /** How many antibiotics were reported on a worksheet's AST table.
+   *  calculateCellValue receives the row data object directly (not { data }). */
+  const astCount = (e: any) => (e?.astresult ?? []).length;
+
   return (
     <div className="page-content" style={{ minHeight: "862px" }}>
       <Titlebar
@@ -204,7 +208,7 @@ const FacilityBacteriologyResultList = () => {
                 sortOrder="asc"
                 cellRender={(e) => {
                   const target =
-                    e.data.status.status_name == "Draft" && Assist.canWriteFacility(user)
+                    Assist.canWriteFacility(user) && Assist.resultCaptureOpen(e.data)
                       ? `/facility/bacteriology-results/edit/${e.data.id}`
                       : `/facility/bacteriology-results/view/${e.data.id}`;
                   return <Link to={target}>{e.text}</Link>;
@@ -225,6 +229,12 @@ const FacilityBacteriologyResultList = () => {
                 hidingPriority={5}
               ></Column>
               <Column
+                dataField="testing_not_done_reason"
+                caption="Reason Not Worked"
+                hidingPriority={0}
+                visible={false}
+              ></Column>
+              <Column
                 dataField="gram_stain_reaction"
                 caption="Stain React"
                 hidingPriority={4}
@@ -238,6 +248,12 @@ const FacilityBacteriologyResultList = () => {
                 dataField="organism_identified"
                 caption="Organism Identified"
                 hidingPriority={2}
+              ></Column>
+              <Column
+                caption="AST Agents"
+                dataType="number"
+                hidingPriority={0}
+                calculateCellValue={astCount}
               ></Column>
               <Column
                 dataField="ptcycle.result_submission_due_date"

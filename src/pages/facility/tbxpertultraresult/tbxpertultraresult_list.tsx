@@ -209,7 +209,7 @@ const AdminTBXpertUltraResultList = () => {
                 hidingPriority={23}
                 sortOrder="asc"
                 cellRender={(e) => {
-                  if (e.data.status.status_name == "Draft" && Assist.canWriteFacility(user)) {
+                  if (Assist.canWriteFacility(user) && Assist.resultCaptureOpen(e.data)) {
                     return (
                     <Link to={`/facility/tb-xpert-ultra-results/edit/${e.data.id}`}>
                       {e.text}

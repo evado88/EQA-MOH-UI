@@ -8,7 +8,6 @@ import { TextBox } from "devextreme-react/text-box";
 import { CheckBox } from "devextreme-react/check-box";
 import { Validator, RequiredRule } from "devextreme-react/validator";
 import TextArea from "devextreme-react/text-area";
-import { NumberBox } from "devextreme-react/number-box";
 import Button from "devextreme-react/button";
 import ValidationSummary from "devextreme-react/validation-summary";
 import { LoadPanel } from "devextreme-react/load-panel";
@@ -81,18 +80,6 @@ const BacteriologyResultEdit = () => {
   const [sampleName, setSampleName] = useState<string>("");
 
   //worksheet header
-  const [date_samples_received, setDateSamplesReceived] = useState<
-    undefined | Date | string
-  >(undefined);
-  const [receipt_temperature, setReceiptTemperature] = useState<
-    undefined | number
-  >(undefined);
-  const [sample_condition, setSampleCondition] = useState<undefined | string>(
-    undefined,
-  );
-  const [sample_condition_reason, setSampleConditionReason] = useState<
-    undefined | string
-  >(undefined);
   const [date_submitted, setDateSubmitted] = useState<
     undefined | Date | string
   >(undefined);
@@ -238,10 +225,6 @@ const BacteriologyResultEdit = () => {
     setMethodSample(data.method_sample_id);
     setSampleName(data.methodsample?.name ?? data.name ?? "");
 
-    setDateSamplesReceived(data.date_samples_received ?? undefined);
-    setReceiptTemperature(data.receipt_temperature ?? undefined);
-    setSampleCondition(data.sample_condition);
-    setSampleConditionReason(data.sample_condition_reason);
     setDateSubmitted(data.date_submitted ?? undefined);
 
     setTestingNotDone(data.testing_not_done ?? false);
@@ -272,7 +255,6 @@ const BacteriologyResultEdit = () => {
 
   //a specimen that was not worked carries nothing else
   const worked = !testing_not_done;
-  const wasUnsuitable = sample_condition === "Unsuitable";
   const morphologyIsOther = gram_morphology === MORPHOLOGY_OTHER;
   const micMethodIsOther = ast_mic_method === MIC_METHOD_OTHER;
 
@@ -370,10 +352,6 @@ const BacteriologyResultEdit = () => {
       method_id: method,
       method_sample_id: method_sample,
       //worksheet header
-      date_samples_received: asDate(date_samples_received),
-      receipt_temperature: receipt_temperature ?? null,
-      sample_condition: sample_condition,
-      sample_condition_reason: wasUnsuitable ? sample_condition_reason : null,
       date_submitted: asDate(date_submitted),
       //the specimen
       testing_not_done: testing_not_done,
@@ -545,73 +523,7 @@ const BacteriologyResultEdit = () => {
                 </div>
 
                 <div className="dx-fieldset">
-                  <div className="dx-fieldset-header">Receipt of PT Samples</div>
-                  <div className="dx-field">
-                    <div className="dx-field-label">
-                      Receipt Date of PT Samples
-                    </div>
-                    <DateBox
-                      className="dx-field-value"
-                      placeholder="Receipt Date of PT Samples"
-                      type="date"
-                      displayFormat="dd MMM yyyy"
-                      max={new Date()}
-                      value={date_samples_received}
-                      disabled={error || saving}
-                      onValueChange={(value) => setDateSamplesReceived(value)}
-                    >
-                      <Validator>
-                        <RequiredRule message="Receipt Date of PT Samples is required" />
-                      </Validator>
-                    </DateBox>
-                  </div>
-                  <div className="dx-field">
-                    <div className="dx-field-label">
-                      Receipt Temperature (&deg;C)
-                    </div>
-                    <NumberBox
-                      className="dx-field-value"
-                      placeholder="Temperature on arrival"
-                      min={-30}
-                      max={50}
-                      format="#0.0"
-                      value={receipt_temperature}
-                      disabled={error || saving}
-                      onValueChange={(value) => setReceiptTemperature(value)}
-                    />
-                  </div>
-                  <div className="dx-field">
-                    <div className="dx-field-label">Sample Condition</div>
-                    <SelectBox
-                      className="dx-field-value"
-                      placeholder="Suitable or Unsuitable"
-                      dataSource={options.sampleConditionList}
-                      value={sample_condition}
-                      disabled={error || saving}
-                      onValueChange={(text) => setSampleCondition(text)}
-                    >
-                      <Validator>
-                        <RequiredRule message="Sample Condition is required" />
-                      </Validator>
-                    </SelectBox>
-                  </div>
-                  <div className="dx-field">
-                    <div className="dx-field-label">Reason (if unsuitable)</div>
-                    <TextArea
-                      className="dx-field-value"
-                      placeholder="Why the sample was unsuitable"
-                      height={70}
-                      value={sample_condition_reason}
-                      disabled={error || saving || !wasUnsuitable}
-                      onValueChange={(text) => setSampleConditionReason(text)}
-                    >
-                      <Validator>
-                        {wasUnsuitable && (
-                          <RequiredRule message="Please give the reason the sample was unsuitable" />
-                        )}
-                      </Validator>
-                    </TextArea>
-                  </div>
+                  <div className="dx-fieldset-header">Submission</div>
                   <div className="dx-field">
                     <div className="dx-field-label">Date of Submission</div>
                     <DateBox
