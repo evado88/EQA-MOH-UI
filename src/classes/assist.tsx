@@ -158,6 +158,59 @@ class Assist {
   static STATUS_APPROVED = 4;
   static STATUS_REJECTED = 5;
 
+  static RESULT_STATUS_NOT_SUBMITTED = "Not submitted";
+
+  /**
+   * The status a lab should see for one result sheet in a listing.
+   *
+   * Result submission has no approval step, so a sheet is only ever Draft or
+   * Submitted. A Draft whose submission window has closed - the result
+   * submission due date has passed, or the round's reports have been
+   * published - can no longer be submitted, so it is shown as "Not submitted"
+   * to make a missed round obvious. A Draft while the window is still open
+   * stays "Draft". Anything already submitted is shown as-is.
+   */
+  static resultDisplayStatus(row: any): string {
+    const statusName = row?.status?.status_name ?? "";
+
+    if (statusName !== "Draft") return statusName;
+
+    const cycle = row?.ptcycle;
+    if (cycle) {
+      const now = new Date();
+      const todayStr = `${now.getFullYear()}-${String(
+        now.getMonth() + 1,
+      ).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+      const due = cycle.result_submission_due_date
+        ? String(cycle.result_submission_due_date).slice(0, 10)
+        : null;
+      const closed =
+        cycle.reports_published === true || (due != null && due < todayStr);
+      if (closed) return Assist.RESULT_STATUS_NOT_SUBMITTED;
+    }
+
+    return "Draft";
+  }
+
+  /**
+   * Tallies a set of result rows by their displayed status, using the same
+   * rule as resultDisplayStatus so a round summary matches its listing.
+   */
+  static resultStatusCounts(rows: any[]): {
+    draft: number;
+    submitted: number;
+    notSubmitted: number;
+  } {
+    const counts = { draft: 0, submitted: 0, notSubmitted: 0 };
+    (rows || []).forEach((row) => {
+      const status = Assist.resultDisplayStatus(row);
+      if (status === Assist.RESULT_STATUS_NOT_SUBMITTED) counts.notSubmitted++;
+      else if (status === "Draft") counts.draft++;
+      else counts.submitted++;
+    });
+    return counts;
+  }
+
 
   static STATE_OPEN = 1;
   static STATE_CLOSED = 2;

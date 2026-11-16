@@ -150,19 +150,22 @@ const FacilityTBXpertXDRResultList = () => {
                 onValueChange={(value) => onCycleChange(value)}
               />
             </div>
-            {chosenCycle() && (
-              <div className="dx-field">
-                <div className="dx-field-value-static">
-                  <small>
-                    {chosenCycle().cycle_status} &middot;{" "}
-                    {chosenCycle().result_count} result(s) &middot;{" "}
-                    {chosenCycle().draft_count} draft &middot;{" "}
-                    {chosenCycle().pending_count} awaiting review &middot;{" "}
-                    {chosenCycle().approved_count} approved
-                  </small>
-                </div>
-              </div>
-            )}
+            {chosenCycle() &&
+              (() => {
+                const counts = Assist.resultStatusCounts(data);
+                return (
+                  <div className="dx-field">
+                    <div className="dx-field-value-static">
+                      <small>
+                        {chosenCycle().cycle_status} &middot; {data.length}{" "}
+                        result(s) &middot; {counts.draft} draft &middot;{" "}
+                        {counts.submitted} submitted &middot;{" "}
+                        {counts.notSubmitted} not submitted
+                      </small>
+                    </div>
+                  </div>
+                );
+              })()}
           </Card>
         </Col>
       </Row>
@@ -208,6 +211,14 @@ const FacilityTBXpertXDRResultList = () => {
                       : `/facility/tb-xpert-xdr-results/view/${e.data.id}`;
                   return <Link to={target}>{e.text}</Link>;
                 }}
+              ></Column>
+              <Column
+                dataField="status.status_name"
+                caption="Status"
+                hidingPriority={25}
+                calculateCellValue={(row: any) =>
+                  Assist.resultDisplayStatus(row)
+                }
               ></Column>
               <Column
                 dataField="ptcycle.name"

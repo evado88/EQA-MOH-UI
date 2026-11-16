@@ -264,24 +264,6 @@ const FacilityTBXpertXDRResultView = () => {
                       <strong>{detail.status.status_name}</strong>
                     </div>
                   </div>
-                  <div className="dx-field">
-                    <div className="dx-field-label">Stage</div>
-                    <div className="dx-field-value-static">
-                      <strong>{detail.stage.stage_name}</strong>
-                    </div>
-                  </div>
-                  <div className="dx-field">
-                    <div className="dx-field-label">Reviewer</div>
-                    <div className="dx-field-value-static">
-                      <strong>{detail.review1_by}</strong>
-                    </div>
-                  </div>
-                  <div className="dx-field">
-                    <div className="dx-field-label">Review Comments</div>
-                    <div className="dx-field-value-static">
-                      <strong>{detail.review1_comments}</strong>
-                    </div>
-                  </div>
                 </div>
               </div>
             )}

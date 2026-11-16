@@ -190,9 +190,6 @@ const FacilityBacteriologyResultView = () => {
                   )}
                   {field("Internal Notes", detail.description)}
                   {field("Status", detail.status.status_name)}
-                  {field("Stage", detail.stage.stage_name)}
-                  {field("Reviewer", detail.review1_by)}
-                  {field("Review Comments", detail.review1_comments)}
                 </div>
               </div>
             )}

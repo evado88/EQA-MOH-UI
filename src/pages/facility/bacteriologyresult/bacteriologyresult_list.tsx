@@ -122,10 +122,6 @@ const FacilityBacteriologyResultList = () => {
 
   const chosenCycle = () => cycles.find((c: any) => c.pt_cycle_id === cycleId);
 
-  /** How many antibiotics were reported on a worksheet's AST table.
-   *  calculateCellValue receives the row data object directly (not { data }). */
-  const astCount = (e: any) => (e?.astresult ?? []).length;
-
   return (
     <div className="page-content" style={{ minHeight: "862px" }}>
       <Titlebar
@@ -153,19 +149,22 @@ const FacilityBacteriologyResultList = () => {
                 onValueChange={(value) => onCycleChange(value)}
               />
             </div>
-            {chosenCycle() && (
-              <div className="dx-field">
-                <div className="dx-field-value-static">
-                  <small>
-                    {chosenCycle().cycle_status} &middot;{" "}
-                    {chosenCycle().result_count} worksheet(s) &middot;{" "}
-                    {chosenCycle().draft_count} draft &middot;{" "}
-                    {chosenCycle().pending_count} awaiting review &middot;{" "}
-                    {chosenCycle().approved_count} approved
-                  </small>
-                </div>
-              </div>
-            )}
+            {chosenCycle() &&
+              (() => {
+                const counts = Assist.resultStatusCounts(data);
+                return (
+                  <div className="dx-field">
+                    <div className="dx-field-value-static">
+                      <small>
+                        {chosenCycle().cycle_status} &middot; {data.length}{" "}
+                        worksheet(s) &middot; {counts.draft} draft &middot;{" "}
+                        {counts.submitted} submitted &middot;{" "}
+                        {counts.notSubmitted} not submitted
+                      </small>
+                    </div>
+                  </div>
+                );
+              })()}
           </Card>
         </Col>
       </Row>
@@ -198,11 +197,10 @@ const FacilityBacteriologyResultList = () => {
               <Toolbar>
                 <Item name="columnChooserButton" />
               </Toolbar>
-              <Column dataField="id" caption="ID" hidingPriority={24}></Column>
               <Column
-                dataField="name"
-                caption="Name"
-                hidingPriority={23}
+                dataField="methodsample.name"
+                caption="Sample ID"
+                hidingPriority={6}
                 sortOrder="asc"
                 cellRender={(e) => {
                   const target =
@@ -213,114 +211,37 @@ const FacilityBacteriologyResultList = () => {
                 }}
               ></Column>
               <Column
-                dataField="ptcycle.name"
-                caption="Survey"
-                hidingPriority={22}
-              ></Column>
-              <Column
-                dataField="methodsample.name"
-                caption="Sample ID"
-                hidingPriority={21}
-              ></Column>
-              <Column
-                dataField="method.name"
-                caption="Method"
-                hidingPriority={20}
+                dataField="status.status_name"
+                caption="Status"
+                hidingPriority={7}
+                calculateCellValue={(row: any) =>
+                  Assist.resultDisplayStatus(row)
+                }
               ></Column>
               <Column
                 dataField="testing_not_done"
                 caption="Not Worked"
                 dataType="boolean"
-                hidingPriority={19}
+                hidingPriority={5}
               ></Column>
               <Column
                 dataField="gram_stain_reaction"
-                caption="Stain Reaction"
-                hidingPriority={18}
+                caption="Stain React"
+                hidingPriority={4}
               ></Column>
               <Column
                 dataField="gram_morphology"
                 caption="Morphology"
-                hidingPriority={17}
+                hidingPriority={3}
               ></Column>
               <Column
                 dataField="organism_identified"
                 caption="Organism Identified"
-                hidingPriority={16}
-              ></Column>
-              <Column
-                caption="AST Agents"
-                dataType="number"
-                hidingPriority={15}
-                calculateCellValue={astCount}
-              ></Column>
-              <Column
-                dataField="ast_guideline"
-                caption="AST Guideline"
-                hidingPriority={14}
-                visible={false}
-              ></Column>
-              <Column
-                dataField="testing_not_done_reason"
-                caption="Reason Not Worked"
-                hidingPriority={13}
-                visible={false}
-              ></Column>
-              <Column
-                dataField="sample_condition"
-                caption="Sample Condition"
-                hidingPriority={12}
-                visible={false}
-              ></Column>
-              <Column
-                dataField="date_samples_received"
-                caption="Samples Received"
-                dataType="date"
-                format="dd MMM yyyy"
-                hidingPriority={11}
-                visible={false}
-              ></Column>
-              <Column
-                dataField="receipt_temperature"
-                caption="Receipt Temp (C)"
-                dataType="number"
-                format="#0.0"
-                hidingPriority={10}
-                visible={false}
-              ></Column>
-              <Column
-                dataField="date_submitted"
-                caption="Date Submitted"
-                dataType="date"
-                format="dd MMM yyyy"
-                hidingPriority={9}
-                visible={false}
-              ></Column>
-              <Column
-                dataField="reported_by"
-                caption="Reported By"
-                hidingPriority={8}
-                visible={false}
-              ></Column>
-              <Column
-                dataField="reviewed_by"
-                caption="Reviewed By"
-                hidingPriority={7}
-                visible={false}
-              ></Column>
-              <Column
-                dataField="stage.stage_name"
-                caption="Stage"
-                hidingPriority={3}
-              ></Column>
-              <Column
-                dataField="status.status_name"
-                caption="Status"
                 hidingPriority={2}
               ></Column>
               <Column
-                dataField="created_at"
-                caption="Date"
+                dataField="ptcycle.result_submission_due_date"
+                caption="Result Submission Closing Date"
                 dataType="date"
                 format="dd MMM yyyy"
                 hidingPriority={1}

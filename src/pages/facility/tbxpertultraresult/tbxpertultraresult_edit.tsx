@@ -246,9 +246,6 @@ const TBXpertUltraResultEdit = () => {
       xpert_module_number: xpert_module_number,
       // approval
       status_id: statusId,
-      stage_id: isDraft
-        ? Assist.STAGE_AWAITING_SUBMISSION
-        : Assist.STAGE_SUBMITTED,
       approval_levels: 1,
     };
 
