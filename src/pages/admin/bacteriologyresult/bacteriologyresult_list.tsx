@@ -109,8 +109,9 @@ const AdminBacteriologyResultList = () => {
 
   const chosenCycle = () => cycles.find((c: any) => c.pt_cycle_id === cycleId);
 
-  /** How many antibiotics were reported on a worksheet's AST table */
-  const astCount = (e: any) => (e.data.astresult ?? []).length;
+  /** How many antibiotics were reported on a worksheet's AST table.
+   *  calculateCellValue receives the row data object directly (not { data }). */
+  const astCount = (e: any) => (e?.astresult ?? []).length;
 
   return (
     <div className="page-content" style={{ minHeight: "862px" }}>
