@@ -439,6 +439,19 @@ const AdminPTCycle = () => {
           {cycle != null && isApproved() && (
             <Card title="Round Actions" showHeader={true}>
               <div className="form">
+                <div className="dx-field">
+                  <div className="dx-field-label"></div>
+                  <div className="dx-field-value">
+                    <Button
+                      width="100%"
+                      type="normal"
+                      icon="detailslayout"
+                      text="Set Round Targets"
+                      onClick={() => navigate(`/admin/pt-cycles/targets/${eId}`)}
+                    />
+                  </div>
+                </div>
+
                 {cycle.pt_cyle_status_id >= Assist.PT_CYCLE_SAMPLES_SHIPPED && (
                   <div className="dx-field">
                     <div className="dx-field-label"></div>

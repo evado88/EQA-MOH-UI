@@ -101,6 +101,7 @@ import {
   AdminBacteriologyResultViewPage,
   // Evaluation and reports
   AdminEvaluationViewPage,
+  AdminTargetsViewPage,
   PTReportViewPage,
   // Data migration
   AdminImportDataPage,
@@ -247,6 +248,9 @@ function App() {
           <Route path="/admin/bacteriology-results/view/:eId" element={<AdminBacteriologyResultViewPage/>} />
           {/* Round Evaluation */}
           <Route path="/admin/pt-cycles/evaluation/:eId" element={<AdminEvaluationViewPage/>} />
+
+          {/* Round Targets */}
+          <Route path="/admin/pt-cycles/targets/:eId" element={<AdminTargetsViewPage/>} />
           {/* PT Performance Report */}
           <Route path="/admin/reports/pt-performance" element={<PTReportViewPage/>} />
           <Route path="/admin/reports/pt-performance/:eId" element={<PTReportViewPage/>} />

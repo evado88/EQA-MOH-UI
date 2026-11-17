@@ -102,6 +102,8 @@ export { default as AdminRoleEditPage } from './admin/role/role_edit'
 export { default as AdminRoleViewPage } from './admin/role/role_view'
 {/* Evaluation */}
 export { default as AdminEvaluationViewPage } from './admin/evaluation/evaluation_view'
+{/* Round Targets */}
+export { default as AdminTargetsViewPage } from './admin/target/targets_view'
 {/* Reports */}
 export { default as PTReportViewPage } from './report/ptreport_view'
 {/* Data Migration */}
