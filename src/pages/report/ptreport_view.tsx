@@ -572,21 +572,6 @@ const PTReportView = () => {
                   </div>
                 </div>
               )}
-
-              {meta?.renderer === "placeholder" && (
-                <div className="dx-fieldset">
-                  <div className="dx-field">
-                    <div className="dx-field-value-static">
-                      <small>
-                        This document comes from the placeholder renderer. The
-                        production report is produced by XtraReports from the
-                        reporting service; point{" "}
-                        <code>AppInfo.reportApiUrl</code> at it to switch over.
-                      </small>
-                    </div>
-                  </div>
-                </div>
-              )}
             </div>
           </Card>
         </Col>
