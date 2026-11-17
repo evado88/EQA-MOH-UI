@@ -21,6 +21,11 @@ const OPERATIONAL = Assist.ADMIN_ROLES;
 // scheme approvers plus the Finance role (for the payment approval step)
 const PAYMENT_APPROVERS = Assist.PAYMENT_APPROVER_ROLES;
 const LAB = Assist.LABORATORY_ROLES;
+// who may open accounts for a facility: its super user, plus the Administrator
+const FACILITY_ADMIN = [
+  ...Assist.FACILITY_WRITE_ROLES,
+  ...Assist.SYSTEM_ADMIN_ROLES,
+];
 const EVERYONE = [...Assist.PROVIDER_ROLES, ...LAB];
 
 export const navigation: MenuItem[] = [
@@ -334,6 +339,14 @@ export const navigation: MenuItem[] = [
     icon: "fa fa-file-text-o",
     path: "/facility/my-registrations",
     roles: LAB,
+    items: [],
+  },
+  {
+    key: "19c-facility-staff",
+    text: "Facility Staff",
+    icon: "fa fa-users",
+    path: "/facility/staff/list",
+    roles: FACILITY_ADMIN,
     items: [],
   },
   {

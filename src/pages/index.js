@@ -127,6 +127,9 @@ export { default as FacilityHIVEIDResultViewPage } from './facility/hiveidresult
 export { default as FacilityBacteriologyResultListPage } from './facility/bacteriologyresult/bacteriologyresult_list'
 export { default as FacilityBacteriologyResultEditPage } from './facility/bacteriologyresult/bacteriologyresult_edit'
 export { default as FacilityBacteriologyResultViewPage } from './facility/bacteriologyresult/bacteriologyresult_view'
+
+{/* Facility staff accounts */}
+export { default as FacilityStaffListPage } from './facility/staff/staff_list'
 {/* Performance */}
 export { default as FacilityPerformanceListPage } from './facility/performance/performance_list'
 export { default as FacilityPerformanceViewPage } from './facility/performance/performance_view'

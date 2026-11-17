@@ -130,6 +130,7 @@ import {
   FacilityBacteriologyResultListPage,
   FacilityBacteriologyResultEditPage,
   FacilityBacteriologyResultViewPage,
+  FacilityStaffListPage,
   FacilityPerformanceListPage,
   FacilityPerformanceViewPage,
   FacilityTBXpertUltraResultListPage,
@@ -273,6 +274,9 @@ function App() {
           <Route path="/facility/schemes" element={<SchemeSelectPage/>} />
           <Route path="/facility/schemes/register/:eId" element={<SchemeRegisterPage/>} />
           <Route path="/facility/my-registrations" element={<MyRegistrationsPage/>} />
+
+         {/* facility staff accounts (super user + admin) */}
+          <Route path="/facility/staff/list" element={<FacilityStaffListPage/>} />
           {/* payment approvals (scheme approvers + Finance) */}
           <Route path="/admin/payment-approvals" element={<PaymentApprovalsPage/>} />
 
